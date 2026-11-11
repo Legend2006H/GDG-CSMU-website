@@ -29,12 +29,21 @@ export function Footer() {
         <div className="footer-intro md:col-span-1">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
             <div className="relative h-7 w-auto flex-none flex items-center">
+              {/* Dark mode logo */}
               <Image
                 src="/images/gdg-csmu-banner-logo.png"
                 alt="GDG CSMU Logo"
                 width={150}
                 height={28}
-                className="object-contain h-7 w-auto"
+                className="object-contain h-7 w-auto block dark-logo"
+              />
+              {/* Light mode logo */}
+              <Image
+                src="/images/gdg-csmu-banner-logo-light.png"
+                alt="GDG CSMU Logo"
+                width={150}
+                height={28}
+                className="object-contain h-7 w-auto hidden light-logo"
               />
             </div>
           </Link>

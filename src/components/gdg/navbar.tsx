@@ -70,12 +70,22 @@ export function Navbar() {
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
           <div className="flex items-center gap-2">
             <div className="relative h-7 w-auto flex-none flex items-center">
+              {/* Dark mode logo (white GDG text) */}
               <Image
                 src="/images/gdg-csmu-banner-logo.png"
                 alt="GDG CSMU Logo"
                 width={140}
                 height={26}
-                className="object-contain h-6 w-auto"
+                className="object-contain h-6 w-auto block dark-logo"
+                priority
+              />
+              {/* Light mode logo (black GDG text) */}
+              <Image
+                src="/images/gdg-csmu-banner-logo-light.png"
+                alt="GDG CSMU Logo"
+                width={140}
+                height={26}
+                className="object-contain h-6 w-auto hidden light-logo"
                 priority
               />
             </div>

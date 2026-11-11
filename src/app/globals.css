@@ -43,6 +43,24 @@
   --card-border: #e0e0e0;
 }
 
+/* Theme-adaptive logo switching */
+.dark-logo {
+  display: block !important;
+}
+.light-logo {
+  display: none !important;
+}
+
+[data-theme="light"] .dark-logo,
+:root.light .dark-logo {
+  display: none !important;
+}
+
+[data-theme="light"] .light-logo,
+:root.light .light-logo {
+  display: block !important;
+}
+
 @keyframes touch-ripple {
   0% {
     width: 0px;
