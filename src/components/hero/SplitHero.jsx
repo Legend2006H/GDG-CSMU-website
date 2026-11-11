@@ -292,8 +292,12 @@ export function SplitHero() {
       className="relative w-full bg-[var(--bg)] h-[135svh] md:h-auto min-h-[100svh]"
       style={{ height: isAnimated ? HERO_SCROLL_HEIGHT : undefined }}
     >
-      {/* Background Dot-Grid with Mouse & Touch Glow */}
-      <DotGrid />
+      {/* Background Dot-Grid with Mouse & Touch Glow — sticky viewport container prevents canvas stretching and keeps glow 1:1 synced to cursor */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="sticky top-0 left-0 w-full h-[100svh] md:h-screen overflow-hidden">
+          <DotGrid />
+        </div>
+      </div>
 
       {/* Soft Google ambient glows behind content on mobile (step 4) */}
       <div

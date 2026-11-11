@@ -199,9 +199,22 @@ export function DotGrid({ className = "" }) {
     const handlePointerMove = (e) => {
       if (isOffCondition()) return;
       const rect = canvas.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
-      isInteracting = true;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Track pointer whenever cursor is within the visible canvas viewport area
+      if (x >= -60 && x <= width + 60 && y >= -60 && y <= height + 60) {
+        targetX = x;
+        targetY = y;
+        isInteracting = true;
+      } else {
+        isInteracting = false;
+        const isMobile = window.innerWidth < 768;
+        if (!isMobile) {
+          targetX = -9999;
+          targetY = -9999;
+        }
+      }
     };
 
     const handlePointerLeave = () => {
@@ -219,14 +232,18 @@ export function DotGrid({ className = "" }) {
       const touch = e.touches[0];
       if (!touch) return;
       const rect = canvas.getBoundingClientRect();
-      targetX = touch.clientX - rect.left;
-      targetY = touch.clientY - rect.top;
-      isInteracting = true;
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      if (x >= 0 && x <= width && y >= 0 && y <= height) {
+        targetX = x;
+        targetY = y;
+        isInteracting = true;
 
-      // Trigger tap burst
-      burstActive = true;
-      burstRadius = GLOW_RADIUS;
-      burstAlpha = GLOW_ALPHA_BONUS;
+        // Trigger tap burst
+        burstActive = true;
+        burstRadius = GLOW_RADIUS;
+        burstAlpha = GLOW_ALPHA_BONUS;
+      }
     };
 
     const handleTouchMove = (e) => {
@@ -234,9 +251,13 @@ export function DotGrid({ className = "" }) {
       const touch = e.touches[0];
       if (!touch) return;
       const rect = canvas.getBoundingClientRect();
-      targetX = touch.clientX - rect.left;
-      targetY = touch.clientY - rect.top;
-      isInteracting = true;
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      if (x >= -40 && x <= width + 40 && y >= -40 && y <= height + 40) {
+        targetX = x;
+        targetY = y;
+        isInteracting = true;
+      }
     };
 
     const handleTouchEnd = () => {
@@ -299,12 +320,23 @@ export function DotGrid({ className = "" }) {
 
     if (heroContainer) {
       observer.observe(heroContainer);
-      heroContainer.addEventListener("pointermove", handlePointerMove, { passive: true });
-      heroContainer.addEventListener("pointerleave", handlePointerLeave);
-      heroContainer.addEventListener("touchstart", handleTouchStart, { passive: true });
-      heroContainer.addEventListener("touchmove", handleTouchMove, { passive: true });
-      heroContainer.addEventListener("touchend", handleTouchEnd, { passive: true });
     }
+
+    // Window-level pointer tracking ensures smooth 1:1 synchronization with custom cursor
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    // ResizeObserver on canvas ensures internal bitmap buffer matches CSS layout 1:1 without vertical stretching
+    const resizeObserver = new ResizeObserver(() => {
+      resize();
+      if (isOffCondition()) {
+        drawStaticDotField();
+      }
+    });
+    resizeObserver.observe(canvas);
 
     window.addEventListener("resize", handleDebouncedResize);
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -321,13 +353,12 @@ export function DotGrid({ className = "" }) {
       cancelAnimationFrame(animFrameId);
       clearTimeout(resizeTimer);
       observer.disconnect();
-      if (heroContainer) {
-        heroContainer.removeEventListener("pointermove", handlePointerMove);
-        heroContainer.removeEventListener("pointerleave", handlePointerLeave);
-        heroContainer.removeEventListener("touchstart", handleTouchStart);
-        heroContainer.removeEventListener("touchmove", handleTouchMove);
-        heroContainer.removeEventListener("touchend", handleTouchEnd);
-      }
+      resizeObserver.disconnect();
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", handleDebouncedResize);
       window.removeEventListener("theme-change", handleThemeChange);
       themeObserver.disconnect();
