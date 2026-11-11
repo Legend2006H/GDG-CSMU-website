@@ -15,21 +15,6 @@
       "registrationLink": null,
       "image": "/images/events/fallback.jpg",
       "status": "Upcoming"
-    },
-    {
-      "id": "gdg-orientation-2026",
-      "title": "GDG Orientation",
-      "date": "2026-11-16",
-      "displayDate": "Mon 16 Nov 2026",
-      "time": "To be confirmed",
-      "location": "To be confirmed",
-      "mode": "To be confirmed",
-      "expectedAttendees": "To be confirmed",
-      "speaker": "GDG CSMU Team",
-      "description": "More details will be shared soon.",
-      "registrationLink": null,
-      "image": "/images/events/fallback.jpg",
-      "status": "Upcoming"
     }
   ],
   
