@@ -100,11 +100,16 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors duration-200 text-xs tracking-wider ${
-                  isActive ? "text-white font-semibold" : "text-[#aaa] hover:text-white"
+                className={`relative transition-colors duration-200 text-xs tracking-wider px-1.5 py-1 ${
+                  isActive
+                    ? "text-[#4285F4] font-bold"
+                    : "text-[var(--muted-bright)] hover:text-[var(--white)]"
                 }`}
               >
-                &lt; {item.label} &gt;
+                <span>&lt; {item.label} &gt;</span>
+                {isActive && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#4285F4]" />
+                )}
               </Link>
             );
           })}

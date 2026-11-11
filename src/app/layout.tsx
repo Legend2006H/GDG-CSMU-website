@@ -27,6 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10001] focus:px-4 focus:py-2 focus:bg-[#4285F4] focus:text-white focus:rounded-full focus:shadow-lg focus:outline-none font-mono text-xs font-semibold"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider>
           <SmoothScrollProvider>
             <Preloader />
@@ -34,7 +40,7 @@ export default function RootLayout({
             <CustomCursor />
             <ViewTransitionHandler />
             <Navbar />
-            <main className="flex-1 w-full">{children}</main>
+            <main id="main-content" className="flex-1 w-full">{children}</main>
             <Footer />
           </SmoothScrollProvider>
         </ThemeProvider>

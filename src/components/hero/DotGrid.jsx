@@ -51,8 +51,8 @@ export function DotGrid({ className = "" }) {
       document.documentElement.classList.contains("light") ||
       document.documentElement.getAttribute("data-theme") === "light";
 
-    const getBgColor = () => (isLightMode() ? "#f9f9fb" : "#101010");
-    const getDotRgb = () => (isLightMode() ? "15, 23, 42" : "255, 255, 255");
+    const getBgColor = () => (isLightMode() ? "#fafafa" : "#101010");
+    const getDotRgb = () => (isLightMode() ? "100, 100, 100" : "255, 255, 255");
 
     const isOffCondition = () => prefersReducedMotion;
 
@@ -62,7 +62,8 @@ export function DotGrid({ className = "" }) {
       ctx.fillRect(0, 0, width, height);
 
       const rgb = getDotRgb();
-      ctx.fillStyle = `rgba(${rgb}, ${BASE_ALPHA})`;
+      const dotAlpha = isLightMode() ? 0.22 : BASE_ALPHA;
+      ctx.fillStyle = `rgba(${rgb}, ${dotAlpha})`;
       ctx.beginPath();
       for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
         for (let y = DOT_SPACING / 2; y < height; y += DOT_SPACING) {

@@ -143,8 +143,8 @@ export function SplitHero() {
           );
         }
 
-        // 4. Meta group (eyebrow + subtext + buttons + stats) fades out and moves up by META_FADE_END (0.35)
-        const metaElements = [eyebrowRef.current, metaRef.current].filter(Boolean);
+        // 4. Meta group (eyebrow + subtext + buttons + stats + hint) fades out and moves up by META_FADE_END (0.35)
+        const metaElements = [eyebrowRef.current, metaRef.current, hintRef.current].filter(Boolean);
         if (metaElements.length > 0) {
           tl.to(
             metaElements,
@@ -218,8 +218,8 @@ export function SplitHero() {
         <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center text-center my-auto px-2">
           {/* Eyebrow */}
           <div ref={eyebrowRef} className="w-full flex flex-col items-center will-change-transform">
-            <p className="font-mono text-[10px] sm:text-xs md:text-sm uppercase tracking-[0.2em] text-[#8db1ff] mb-4 sm:mb-6 max-w-2xl px-2">
-              GOOGLE DEVELOPER GROUPS ON CAMPUS — CHHATRAPATI SHIVAJI MAHARAJ UNIVERSITY
+            <p className="font-mono text-[10px] sm:text-xs md:text-sm uppercase tracking-[0.2em] text-[var(--hero-eyebrow)] font-semibold mb-4 sm:mb-6 max-w-3xl px-2">
+              GOOGLE DEVELOPER GROUPS ON CAMPUS · CSMU PANVEL
             </p>
           </div>
 
@@ -237,7 +237,7 @@ export function SplitHero() {
               <span ref={leftChevronRef} className="inline-block will-change-transform">
                 <DottedChevron side="left" />
               </span>
-              <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--white)] whitespace-nowrap">
+              <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--hero-title)] whitespace-nowrap">
                 GDG
               </span>
             </span>
@@ -248,7 +248,7 @@ export function SplitHero() {
               aria-hidden="true"
               className="flex items-center gap-2 sm:gap-3.5 will-change-transform"
             >
-              <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--white)] whitespace-nowrap">
+              <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--hero-title)] whitespace-nowrap">
                 CSMU
               </span>
               <span ref={rightChevronRef} className="inline-block will-change-transform">
@@ -287,21 +287,26 @@ export function SplitHero() {
               </Link>
             </div>
 
-            {/* Bottom Stats Strip */}
-            <div className="pt-2 sm:pt-4 flex items-center justify-center gap-3 sm:gap-6 font-mono text-xs sm:text-sm text-[var(--muted-bright)]">
+            {/* Bottom Stats Strip (Canonical Numbers) */}
+            <div className="pt-2 sm:pt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-xs sm:text-sm text-[var(--muted-bright)]">
               <span className="flex items-center gap-2">
                 <i className="inline-block w-2 h-2 rounded-full bg-[#4285F4]" />
-                749+ members
+                750+ members
               </span>
-              <span className="text-[var(--line)]">•</span>
+              <span className="text-[var(--line)] hidden sm:inline">•</span>
               <span className="flex items-center gap-2">
                 <i className="inline-block w-2 h-2 rounded-full bg-[#EA4335]" />
                 15+ events
               </span>
-              <span className="text-[var(--line)]">•</span>
+              <span className="text-[var(--line)] hidden sm:inline">•</span>
+              <span className="flex items-center gap-2">
+                <i className="inline-block w-2 h-2 rounded-full bg-[#FBBC04]" />
+                30+ speakers
+              </span>
+              <span className="text-[var(--line)] hidden sm:inline">•</span>
               <span className="flex items-center gap-2">
                 <i className="inline-block w-2 h-2 rounded-full bg-[#34A853]" />
-                5+ workshops
+                6 tech tracks
               </span>
             </div>
           </div>

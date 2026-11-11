@@ -21,6 +21,7 @@ import {
 import { MarqueeStrip } from "@/components/animation/MarqueeStrip";
 import { Magnetic } from "@/components/animation/Magnetic";
 import { TiltCard } from "@/components/animation/TiltCard";
+import { EventCountdown } from "@/components/events/EventCountdown";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -159,26 +160,93 @@ export default function Home() {
       <section id="about" className="relative z-20 max-w-[1200px] mx-auto px-6 py-20 border-t border-[var(--line)]">
         <div className="modern-card relative overflow-hidden p-8 md:p-12 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-3xl">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC04] to-[#34A853]" />
-          <span className="section-index font-mono text-xs uppercase tracking-wider text-[#8db1ff] font-semibold">
-            {"// ABOUT GDG CSMU"}
-          </span>
-          <h2
-            ref={aboutHeadingRef}
-            className="text-2xl md:text-4xl font-bold tracking-tight text-[var(--white)] mt-3"
-          >
-            About GDG on Campus CSMU
-          </h2>
-          <p
-            ref={aboutTextRef}
-            className="mt-4 text-base md:text-xl text-[var(--muted-bright)] leading-relaxed max-w-3xl"
-          >
-            A student developer community at CSMU. We connect, learn and grow together, and turn what we learn into work our community can use.
-          </p>
-          <div className="mt-6 pt-4 flex items-center gap-4">
-            <Link href="/about" className="button button-primary">
-              <span>Read Our Full Story</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Column: Mission & Info */}
+            <div className="lg:col-span-7 space-y-4">
+              <span className="section-index font-mono text-xs uppercase tracking-wider text-[#8db1ff] font-semibold">
+                {"// ABOUT GDG CSMU"}
+              </span>
+              <h2
+                ref={aboutHeadingRef}
+                className="text-2xl md:text-4xl font-bold tracking-tight text-[var(--white)] mt-1"
+              >
+                About GDG on Campus CSMU
+              </h2>
+              <p
+                ref={aboutTextRef}
+                className="text-base md:text-lg text-[var(--muted-bright)] leading-relaxed"
+              >
+                The official Google Developer Groups on Campus chapter at Chhatrapati Shivaji Maharaj University, Panvel. We connect passionate student developers, explore real-world Google ecosystems, and build impactful software together.
+              </p>
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link href="/about" className="button button-primary">
+                  <span>Read Our Full Story</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/technologies"
+                  className="text-xs font-semibold font-mono text-[#8db1ff] hover:text-[var(--white)] flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Explore 6 Tech Tracks</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Density Stats & Track Pills (fills previous empty space) */}
+            <div className="lg:col-span-5 space-y-4 bg-[var(--surface)] p-6 rounded-2xl border border-[var(--card-border)]">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)]">
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#4285F4] block">
+                    750+
+                  </span>
+                  <span className="text-xs font-mono text-[var(--muted-bright)]">
+                    Community Members
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)]">
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#EA4335] block">
+                    15+
+                  </span>
+                  <span className="text-xs font-mono text-[var(--muted-bright)]">
+                    Events &amp; Workshops
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)]">
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#FBBC04] block">
+                    30+
+                  </span>
+                  <span className="text-xs font-mono text-[var(--muted-bright)]">
+                    Speakers &amp; Mentors
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)]">
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#34A853] block">
+                    100%
+                  </span>
+                  <span className="text-xs font-mono text-[var(--muted-bright)]">
+                    Student Led Community
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-[var(--line)]">
+                <span className="text-[11px] font-mono text-[var(--muted)] uppercase tracking-wider block mb-2">
+                  Active Tracks at CSMU:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {["Web Dev", "Android", "Cloud", "AI / ML", "UI/UX", "CP"].map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-0.5 rounded-md font-mono text-[10px] bg-[var(--surface-highlight)] text-[var(--white)] border border-[var(--line)]"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -210,11 +278,11 @@ export default function Home() {
         <div ref={eventsCardsRef} className="space-y-8">
           {nextEvent ? (
             <div data-cursor="VIEW" className="stack-card sticky top-24 z-10 modern-card relative overflow-hidden p-8 md:p-12 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-3xl will-change-transform shadow-2xl">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4285F4] via-[#EA4335] to-[#FBBC04]" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC04] to-[#34A853]" />
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <div className="lg:col-span-7 space-y-5">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(66,133,244,0.12)] text-[#8db1ff] font-mono text-xs font-semibold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#4285F4]/15 border border-[#4285F4]/30 text-[#8db1ff] font-mono text-xs font-semibold">
                     <Sparkles className="w-3.5 h-3.5 text-[#4285F4]" />
                     <span>Next Chapter Event</span>
                   </div>
@@ -242,14 +310,37 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-2.5">
                       <Code2 className="w-4 h-4 text-[#4285F4]" />
-                      <span>Time: {nextEvent.time || "To be confirmed"}</span>
+                      <span>Time: {nextEvent.time}</span>
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center gap-4">
-                    <Link href="/events" className="button button-primary" data-cursor="VIEW">
-                      <span>View Event Details</span>
-                      <ArrowRight className="w-4 h-4" />
+                  {/* Live countdown & Add to Calendar */}
+                  <EventCountdown
+                    targetDate="2026-11-17T10:30:00+05:30"
+                    eventTitle={nextEvent.title}
+                    location={nextEvent.location}
+                    description={nextEvent.description}
+                  />
+
+                  <div className="pt-4 flex flex-wrap items-center gap-4">
+                    {nextEvent.registrationLink && (
+                      <a
+                        href={nextEvent.registrationLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="button button-primary"
+                        data-cursor="VIEW"
+                      >
+                        <span>Register Now (Form)</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </a>
+                    )}
+                    <Link
+                      href="/events"
+                      className="px-5 py-2.5 rounded-full text-xs font-semibold font-mono border border-[var(--line)] text-[var(--white)] hover:border-[#4285F4] transition-colors"
+                      data-cursor="VIEW"
+                    >
+                      <span>View All Events</span>
                     </Link>
                   </div>
                 </div>
@@ -259,7 +350,7 @@ export default function Home() {
                     <div className="relative aspect-[16/10] rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--surface-highlight)]">
                       <Image
                         src={nextEvent.image}
-                        alt={nextEvent.title}
+                        alt="GDG CSMU Annual Orientation 2026 - Main Auditorium, Panvel"
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 40vw"
@@ -267,7 +358,7 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] via-transparent to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
                         <span className="font-mono text-[11px] text-white/90 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
-                          GDG CSMU Official
+                          CSMU Campus, Panvel · Official
                         </span>
                       </div>
                     </div>
@@ -352,29 +443,35 @@ export default function Home() {
 
         <div ref={techGridRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
-            { title: "Web Development", icon: Globe, color: "#4285F4" },
-            { title: "Android Development", icon: Cpu, color: "#34A853" },
-            { title: "Cloud & DevOps", icon: Layers, color: "#EA4335" },
-            { title: "AI / ML", icon: Sparkles, color: "#FBBC04" },
-            { title: "UI/UX Design", icon: Palette, color: "#EA4335" },
-            { title: "Competitive Programming", icon: Trophy, color: "#4285F4" },
+            { id: "web", title: "Web Development", icon: Globe, color: "#4285F4" },
+            { id: "android", title: "Android Development", icon: Cpu, color: "#34A853" },
+            { id: "cloud", title: "Cloud & DevOps", icon: Layers, color: "#EA4335" },
+            { id: "ai", title: "AI / ML", icon: Sparkles, color: "#FBBC04" },
+            { id: "uiux", title: "UI/UX Design", icon: Palette, color: "#EA4335" },
+            { id: "cp", title: "Competitive Programming", icon: Trophy, color: "#4285F4" },
           ].map((item) => {
             const Icon = item.icon;
             return (
               <TiltCard key={item.title} maxTilt={10} scale={1.04} glare={true} className="h-full">
                 <Link
-                  href="/technologies"
+                  href={`/technologies#${item.id}`}
                   data-cursor="EXPLORE"
-                  className="modern-card p-5 text-center flex flex-col items-center justify-center gap-3 hover:border-[var(--white)] transition-all h-full"
+                  className="modern-card p-5 text-center flex flex-col items-center justify-between gap-3 hover:border-[#4285F4] hover:-translate-y-1 transition-all h-full group"
                 >
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: `${item.color}15`, color: item.color }}
-                  >
-                    <Icon className="w-5 h-5" />
+                  <div className="flex flex-col items-center gap-3 w-full">
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
+                      style={{ backgroundColor: `${item.color}15`, color: item.color }}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-semibold text-[var(--white)] leading-snug line-clamp-2">
+                      {item.title}
+                    </span>
                   </div>
-                  <span className="text-xs font-semibold text-[var(--white)] leading-snug">
-                    {item.title}
+                  <span className="text-[10px] font-mono font-semibold text-[#8db1ff] opacity-80 group-hover:opacity-100 flex items-center gap-1 pt-1">
+                    <span>Explore</span>
+                    <span>→</span>
                   </span>
                 </Link>
               </TiltCard>
@@ -383,14 +480,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Core Team Teaser (Preview on Home) */}
+      <section className="max-w-[1200px] mx-auto px-6 py-20 border-t border-[var(--line)]">
+        <div className="modern-card p-8 md:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 bg-[var(--surface-card)] rounded-3xl border border-[var(--card-border)]">
+          <div className="space-y-3 text-center md:text-left max-w-xl">
+            <span className="section-index font-mono text-xs uppercase tracking-wider text-[#8db1ff] font-semibold">
+              {"// MEET THE TEAM"}
+            </span>
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-[var(--white)]">
+              Built by students, for students
+            </h2>
+            <p className="text-sm md:text-base text-[var(--muted-bright)] leading-relaxed">
+              Meet our passionate team of organizers, technical leads, and mentors powering GDG on Campus CSMU.
+            </p>
+          </div>
+          <div className="flex items-center gap-4 flex-none">
+            <Link href="/team" className="button button-primary" data-cursor="VIEW">
+              <span>View Full Chapter Team</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* 7. Join Community CTA + Magnetic Buttons */}
       <section className="max-w-[1200px] mx-auto px-6 py-24 border-t border-[var(--line)]">
-        <div className="modern-card relative overflow-hidden p-10 md:p-16 text-center space-y-6 bg-gradient-to-b from-[var(--surface-card)] to-[var(--surface)]">
+        <div className="modern-card relative overflow-hidden p-10 md:p-16 text-center space-y-6 bg-gradient-to-b from-[var(--surface-card)] to-[var(--surface)] border border-[var(--card-border)] rounded-3xl shadow-xl">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC04] to-[#34A853]" />
+
           <div className="inline-flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#4285F4]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EA4335]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FBBC04]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#34A853]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#4285F4] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#EA4335] animate-pulse delay-75" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FBBC04] animate-pulse delay-150" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#34A853] animate-pulse delay-200" />
           </div>
 
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--white)] max-w-2xl mx-auto">
@@ -398,7 +520,7 @@ export default function Home() {
           </h2>
 
           <p className="text-[var(--muted-bright)] max-w-xl mx-auto text-base">
-            Join 749+ student developers at CSMU. Expand your skills, collaborate on open-source projects, and attend cutting-edge workshops.
+            Join 750+ student developers at CSMU Panvel. Expand your skills, collaborate on open-source projects, and attend cutting-edge workshops.
           </p>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">

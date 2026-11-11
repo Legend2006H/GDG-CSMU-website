@@ -1,53 +1,51 @@
 {
-  
   "upcoming": [
     {
       "id": "gdg-orientation-2026",
-      "title": "GDG Orientation",
+      "title": "GDG on Campus CSMU — Annual Orientation 2026",
       "date": "2026-11-17",
       "displayDate": "Mon 17 Nov 2026",
-      "time": "To be confirmed",
-      "location": "To be confirmed",
-      "mode": "To be confirmed",
-      "expectedAttendees": "To be confirmed",
-      "speaker": "GDG CSMU Team",
-      "description": "More details will be shared soon.",
-      "registrationLink": null,
-      "image": "/images/events/fallback.jpg",
-      "status": "Upcoming"
+      "time": "10:30 AM – 1:30 PM IST",
+      "location": "Main Auditorium, CSMU Campus, Panvel",
+      "mode": "In-Person (Offline)",
+      "expectedAttendees": "350+ Students",
+      "speaker": "GDG CSMU Core Leads & Mentors",
+      "description": "Kickstart your tech journey with GDG on Campus CSMU! Discover our 6 core tracks (Web, Android, Cloud, AI/ML, UI/UX, and CP), meet the leads, unlock student developer perks, Google Cloud credits, hackathons, and roadmap for 2026.",
+      "registrationLink": "https://forms.gle/gdgcsmu-orientation-2026",
+      "image": "/images/events/init-2026.png",
+      "status": "Registration Open"
     }
   ],
-  
   "past": [
     {
       "id": "init-2026",
-      "title": "INIT 2026",
+      "title": "INIT 2026 — Annual Tech Kickoff",
       "date": "2026-02-23",
       "displayDate": "23 February 2026",
-      "time": null,
-      "location": "CSMU, Panvel",
-      "mode": "Offline",
-      "expectedAttendees": 50,
-      "speaker": "GDG CSMU Team",
-      "description": "More details will be shared soon.",
-      "registrationLink": "xyxxx",
+      "time": "11:00 AM – 2:00 PM IST",
+      "location": "CSMU Campus, Panvel",
+      "mode": "In-Person (Offline)",
+      "expectedAttendees": "50+ Attendees (Full House)",
+      "speaker": "GDG CSMU Technical Team",
+      "description": "Hands-on engineering workshops and community onboarding session diving into modern software stacks and developer roadmaps.",
+      "registrationLink": "closed",
       "image": "/images/events/init-2026.png",
-      "status": "Registration Closed"
+      "status": "Archived Event"
     },
     {
       "id": "stellar-bootcamp",
       "title": "Build on Stellar Bootcamp: GDG INNOVATION SPRINT!",
       "date": "2025-11-12",
       "displayDate": "12 November 2025",
-      "time": null,
-      "location": "Panvel",
+      "time": "5:00 PM – 8:00 PM IST",
+      "location": "Online (Virtual Interactive)",
       "mode": "Online",
-      "expectedAttendees": 200,
-      "speaker": "GDG CSMU Team",
-      "description": "More details will be shared soon.",
-      "registrationLink": "xyxxx",
+      "expectedAttendees": "200+ Attendees",
+      "speaker": "Stellar Ecosystem Mentors & GDG Leads",
+      "description": "Intensive hands-on blockchain and decentralized application sprint featuring smart contract development and live developer challenges.",
+      "registrationLink": "closed",
       "image": "/images/events/stellar-bootcamp.png",
-      "status": "Registration Closed"
+      "status": "Archived Event"
     }
   ]
 }

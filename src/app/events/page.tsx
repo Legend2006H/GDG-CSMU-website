@@ -6,6 +6,7 @@ import eventsData from "@/data/events.json";
 import { EventItem } from "@/types/gdg";
 import { Calendar, MapPin, Users, ExternalLink, X, Clock, AlertCircle } from "lucide-react";
 import { TiltCard } from "@/components/animation/TiltCard";
+import { EventCountdown } from "@/components/events/EventCountdown";
 
 export default function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
@@ -74,17 +75,25 @@ export default function EventsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-[#FBBC04]" />
-                          <span>Time: {event.time || "To be confirmed"}</span>
+                          <span>Time: {event.time}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-[#34A853]" />
                           <span>Location: {event.location}</span>
                         </div>
                       </div>
+
+                      {/* Live Countdown & Add to Calendar */}
+                      <EventCountdown
+                        targetDate={event.date + "T10:30:00+05:30"}
+                        eventTitle={event.title}
+                        location={event.location}
+                        description={event.description}
+                      />
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold text-[#8db1ff]">
-                      <span>View Event Details</span>
+                      <span>View Event Details &amp; Register</span>
                       <span>→</span>
                     </div>
                   </div>
@@ -150,7 +159,7 @@ export default function EventsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-[#FBBC04]" />
-                        <span>Expected Attendees: {event.expectedAttendees}</span>
+                        <span>Attendance: {event.expectedAttendees}</span>
                       </div>
                     </div>
                   </div>
@@ -215,10 +224,26 @@ export default function EventsPage() {
                   <span className="font-semibold text-[var(--white)]">{selectedEvent.speaker}</span>
                 </div>
                 <div>
-                  <span className="text-[var(--muted)] block mb-1">EXPECTED ATTENDEES</span>
+                  <span className="text-[var(--muted)] block mb-1">
+                    {selectedEvent.status === "Registration Open" || selectedEvent.status === "Upcoming"
+                      ? "EXPECTED ATTENDEES"
+                      : "ATTENDANCE"}
+                  </span>
                   <span className="font-semibold text-[var(--white)]">{selectedEvent.expectedAttendees}</span>
                 </div>
               </div>
+
+              {/* Countdown inside modal for upcoming events */}
+              {(selectedEvent.status === "Registration Open" || selectedEvent.status === "Upcoming") && (
+                <div className="p-4 rounded-2xl bg-[var(--surface-highlight)] border border-[var(--card-border)]">
+                  <EventCountdown
+                    targetDate={selectedEvent.date + "T10:30:00+05:30"}
+                    eventTitle={selectedEvent.title}
+                    location={selectedEvent.location}
+                    description={selectedEvent.description}
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
                 <h4 className="text-sm font-bold uppercase tracking-wider text-[var(--muted)] font-mono">

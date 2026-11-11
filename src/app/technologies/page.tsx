@@ -7,6 +7,7 @@ import { Globe, Cpu, Layers, Sparkles, Palette, Trophy, ArrowRight, Code } from 
 export default function TechnologiesPage() {
   const techAreas = [
     {
+      id: "web",
       title: "Web Development",
       description: "Modern full-stack web applications, component design systems, and cloud-native frontend architectures.",
       icon: Globe,
@@ -14,6 +15,7 @@ export default function TechnologiesPage() {
       topics: ["React", "Angular", "Next.js", "TypeScript", "Tailwind CSS"],
     },
     {
+      id: "android",
       title: "Android Development",
       description: "Native and modern Android app development leveraging Google's official frameworks and tools.",
       icon: Cpu,
@@ -21,6 +23,7 @@ export default function TechnologiesPage() {
       topics: ["Kotlin", "Jetpack Compose", "Android Studio", "Firebase"],
     },
     {
+      id: "cloud",
       title: "Cloud & DevOps",
       description: "Scalable cloud infrastructure, container orchestration, and automated deployment pipelines.",
       icon: Layers,
@@ -28,6 +31,7 @@ export default function TechnologiesPage() {
       topics: ["Google Cloud Platform", "Docker", "Kubernetes", "CI/CD"],
     },
     {
+      id: "ai",
       title: "AI / ML",
       description: "Intelligent systems, neural network modeling, and production-ready machine learning solutions.",
       icon: Sparkles,
@@ -35,6 +39,7 @@ export default function TechnologiesPage() {
       topics: ["TensorFlow", "PyTorch", "Machine Learning", "Deep Learning"],
     },
     {
+      id: "uiux",
       title: "UI/UX Design",
       description: "User-centric interface prototyping, design tokens, design systems, and interactive research.",
       icon: Palette,
@@ -42,6 +47,7 @@ export default function TechnologiesPage() {
       topics: ["Figma", "Material Design", "User Research", "Prototyping"],
     },
     {
+      id: "cp",
       title: "Competitive Programming",
       description: "Algorithmic thinking, optimized data structures, competitive contest strategies, and problem solving.",
       icon: Trophy,
@@ -68,7 +74,8 @@ export default function TechnologiesPage() {
             return (
               <div
                 key={area.title}
-                className="modern-card p-8 flex flex-col justify-between group hover:border-[var(--white)] transition-all relative overflow-hidden"
+                id={area.id}
+                className="modern-card p-8 flex flex-col justify-between group hover:border-[var(--white)] transition-all relative overflow-hidden scroll-mt-28"
               >
                 <div
                   className="absolute top-0 left-0 right-0 h-1"
