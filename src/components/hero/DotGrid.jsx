@@ -193,6 +193,26 @@ export function DotGrid({ className = "" }) {
       }, 100);
     };
 
+    const handleThemeChange = () => {
+      // Immediately clear to new background with zero delay
+      ctx.fillStyle = getBgColor();
+      ctx.fillRect(0, 0, width, height);
+
+      if (isOffCondition()) {
+        drawStaticDotField();
+      }
+    };
+
+    window.addEventListener("theme-change", handleThemeChange);
+
+    const themeObserver = new MutationObserver(() => {
+      handleThemeChange();
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class"],
+    });
+
     // Pause when hero is off-screen
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -233,6 +253,8 @@ export function DotGrid({ className = "" }) {
         heroContainer.removeEventListener("pointerleave", handlePointerLeave);
       }
       window.removeEventListener("resize", handleDebouncedResize);
+      window.removeEventListener("theme-change", handleThemeChange);
+      themeObserver.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [prefersReducedMotion, isCoarse]);

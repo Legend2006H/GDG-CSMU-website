@@ -36,6 +36,7 @@ function getServerSnapshot(): Theme {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
+  // Synchronize on mount and external changes
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -44,7 +45,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => {
     const nextTheme: Theme = theme === "dark" ? "light" : "dark";
-    localStorage.setItem("gdg-theme", nextTheme);
+    // Apply synchronously to DOM immediately for zero-lag visual response
+    document.documentElement.setAttribute("data-theme", nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+    document.documentElement.classList.toggle("light", nextTheme === "light");
+
+    try {
+      localStorage.setItem("gdg-theme", nextTheme);
+    } catch {
+      // Ignore storage errors in restricted contexts
+    }
     window.dispatchEvent(new Event("theme-change"));
   };
 

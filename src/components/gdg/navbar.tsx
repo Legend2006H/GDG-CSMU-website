@@ -143,9 +143,9 @@ export function Navbar() {
           aria-label="Navigation menu"
         >
           <div className="flex items-center justify-between">
-            <span className="menu-label font-mono text-xs text-[#888]">&lt;menu /&gt;</span>
+            <span className="menu-label font-mono text-xs text-[var(--muted)]">&lt;menu /&gt;</span>
             <button
-              className="menu-close text-2xl text-white cursor-pointer"
+              className="menu-close text-2xl text-[var(--white)] cursor-pointer"
               aria-label="Close navigation menu"
               onClick={() => setOpen(false)}
             >
@@ -159,22 +159,22 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="py-4 border-b border-[#222] flex items-center justify-between text-2xl font-semibold tracking-tight hover:text-[#4285F4] transition-colors"
+                className="py-4 border-b border-[var(--line)] text-[var(--white)] flex items-center justify-between text-2xl font-semibold tracking-tight hover:text-[#4285F4] transition-colors"
                 style={{ "--item-index": i } as React.CSSProperties}
               >
                 <span>{item.label}</span>
-                <small className="font-mono text-xs text-[#666]">
+                <small className="font-mono text-xs text-[var(--muted)]">
                   {String(i + 1).padStart(2, "0")}
                 </small>
               </Link>
             ))}
           </nav>
 
-          <div className="mt-auto pt-8 flex items-center justify-between text-xs text-[#777] font-mono">
-            <span>Google Developers Group on Campus CSMU</span>
+          <div className="mt-auto pt-8 flex items-center justify-between text-xs text-[var(--muted)] font-mono">
+            <span>GDG on Campus CSMU</span>
             <button
               onClick={toggleTheme}
-              className="px-3 py-1.5 rounded-full border border-[#333] text-[#aaa] flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-full border border-[var(--line)] text-[var(--muted-bright)] hover:text-[var(--white)] flex items-center gap-1.5 cursor-pointer transition-colors"
             >
               {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
               <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
