@@ -69,18 +69,16 @@ export function Navbar() {
         {/* Brand */}
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
           <div className="flex items-center gap-2">
-            <div className="relative w-7 h-7 flex-none">
+            <div className="relative h-7 w-auto flex-none flex items-center">
               <Image
-                src="/images/gdg-logo.png"
+                src="/images/gdg-csmu-banner-logo.png"
                 alt="GDG CSMU Logo"
-                width={28}
-                height={28}
-                className="object-contain"
-                style={{ width: "auto", height: "auto" }}
+                width={140}
+                height={26}
+                className="object-contain h-6 w-auto"
                 priority
               />
             </div>
-            <span className="font-bold tracking-tight text-sm">GDG CSMU</span>
           </div>
         </Link>
 

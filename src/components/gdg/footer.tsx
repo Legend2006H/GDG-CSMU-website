@@ -27,18 +27,16 @@ export function Footer() {
       <div className="footer-top max-w-[1200px] mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Col 1: Brand & intro */}
         <div className="footer-intro md:col-span-1">
-          <Link href="/" className="inline-flex items-center gap-2 text-white font-bold text-base mb-4">
-            <div className="relative w-7 h-7 flex-none">
+          <Link href="/" className="inline-flex items-center gap-2 mb-4">
+            <div className="relative h-7 w-auto flex-none flex items-center">
               <Image
-                src="/images/gdg-logo.png"
+                src="/images/gdg-csmu-banner-logo.png"
                 alt="GDG CSMU Logo"
-                width={28}
+                width={150}
                 height={28}
-                className="object-contain"
-                style={{ width: "auto", height: "auto" }}
+                className="object-contain h-7 w-auto"
               />
             </div>
-            <span className="text-[var(--white)]">GDG CSMU</span>
           </Link>
           <p className="text-xs leading-relaxed text-[var(--muted)] mt-2">
             Official Google Developers Group on Campus at CSMU. Building a community of passionate developers.
