@@ -1,10 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import teamData from "@/data/team.json";
-import { TeamMember } from "@/types/gdg";
-import { Mail, User } from "lucide-react";
+import { TeamMember, TeamData } from "@/types/gdg";
+import { Mail } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TiltCard } from "@/components/animation/TiltCard";
 
 function LinkedInIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -26,96 +29,208 @@ function GitHubIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function getInitials(name: string) {
+  const parts = name.trim().split(" ");
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
 export default function TeamPage() {
-  const currentTeam = teamData.current as TeamMember[];
-  const pastLead = teamData.past.lead as TeamMember[];
-  const pastTechnicalHeads = teamData.past.technicalHeads as TeamMember[];
-  const pastCoreTeam = teamData.past.coreTeam as TeamMember[];
+  const typedData = teamData as unknown as TeamData;
+  const { current, past } = typedData;
+
+  const floatingImgRef = useRef<HTMLDivElement>(null);
+  const [hoveredPhoto, setHoveredPhoto] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // 9. Photo reveals: clip-path inset(100% 0 0 0) -> inset(0), inner image scale 1.3 -> 1, expo.out 1.0s
+    const containers = document.querySelectorAll<HTMLElement>(".team-photo-container");
+    containers.forEach((container) => {
+      const img = container.querySelector("img");
+      if (prefersReducedMotion) {
+        gsap.set(container, { clipPath: "inset(0% 0 0 0)" });
+        if (img) gsap.set(img, { scale: 1 });
+        return;
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      tl.fromTo(
+        container,
+        { clipPath: "inset(100% 0 0 0)" },
+        {
+          clipPath: "inset(0% 0 0 0)",
+          duration: 1.0,
+          ease: "expo.out",
+        },
+        0
+      );
+
+      if (img) {
+        tl.fromTo(
+          img,
+          { scale: 1.3 },
+          {
+            scale: 1,
+            duration: 1.0,
+            ease: "expo.out",
+          },
+          0
+        );
+      }
+    });
+
+    // Desktop only floating cursor photo trail
+    const isDesktop = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
+    if (isDesktop && !prefersReducedMotion && floatingImgRef.current) {
+      const floatEl = floatingImgRef.current;
+      const xTo = gsap.quickTo(floatEl, "x", { duration: 0.35, ease: "power3.out" });
+      const yTo = gsap.quickTo(floatEl, "y", { duration: 0.35, ease: "power3.out" });
+
+      const handleMove = (e: MouseEvent) => {
+        xTo(e.clientX + 20);
+        yTo(e.clientY + 20);
+      };
+
+      window.addEventListener("mousemove", handleMove);
+      return () => {
+        window.removeEventListener("mousemove", handleMove);
+      };
+    }
+  }, []);
 
   const renderMemberCard = (member: TeamMember, highlight = false) => {
+    const initials = getInitials(member.name);
+
     return (
-      <div
-        key={member.name}
-        className={`modern-card p-6 flex flex-col justify-between group transition-all ${
-          highlight ? "border-[#4285F4] bg-[rgba(66,133,244,0.03)]" : ""
-        }`}
-      >
-        <div className="space-y-4">
-          <div className="relative aspect-square rounded-2xl overflow-hidden bg-[var(--surface-highlight)] border border-[var(--line)]">
-            {member.photo ? (
-              <Image
-                src={member.photo}
-                alt={member.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-[var(--muted)] bg-[var(--surface-highlight)]">
-                <User className="w-16 h-16 opacity-40" />
-                <span className="font-mono text-xs mt-2 text-[var(--muted)]">GDG CSMU</span>
-              </div>
-            )}
-          </div>
+      <TiltCard key={member.name} maxTilt={9} scale={1.02} glare={true} className="h-full">
+        <div
+          onMouseEnter={() => {
+            if (member.photo) setHoveredPhoto(member.photo);
+          }}
+          onMouseLeave={() => setHoveredPhoto(null)}
+          className={`modern-card p-6 flex flex-col justify-between group transition-all h-full ${
+            highlight ? "border-[#4285F4]/40 bg-[rgba(66,133,244,0.02)]" : ""
+          }`}
+        >
+          <div className="space-y-4">
+            <div className="team-photo-container relative aspect-square rounded-2xl overflow-hidden bg-[var(--surface-highlight)] border border-[var(--line)] flex items-center justify-center">
+              {member.photo ? (
+                <Image
+                  src={member.photo}
+                  alt={member.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-[var(--muted)] bg-gradient-to-br from-[var(--surface-highlight)] to-[var(--surface-card)] select-none">
+                  <span className="font-mono text-3xl font-bold tracking-wider text-[var(--white)] opacity-70 group-hover:scale-110 group-hover:text-[#8db1ff] transition-all">
+                    {initials}
+                  </span>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mt-2">
+                    GDG CSMU
+                  </span>
+                </div>
+              )}
+            </div>
 
-          <div>
-            <h3 className="text-xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
-              {member.name}
-            </h3>
-            <p className="font-mono text-xs text-[#4285F4] mt-1">
-              {member.role}
-            </p>
-            {member.tenure && (
-              <p className="font-mono text-[11px] text-[var(--muted)] mt-0.5">
-                {member.tenure}
+            <div>
+              <h3 className="text-xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors cursor-default">
+                {member.name}
+              </h3>
+              <p className="font-mono text-xs text-[#4285F4] mt-1">
+                {member.role}
               </p>
-            )}
+              {member.tenure && (
+                <p className="font-mono text-[11px] text-[var(--muted)] mt-0.5">
+                  {member.tenure}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Social Links */}
-        <div className="mt-5 pt-4 border-t border-[var(--line)] flex items-center gap-3 text-[var(--muted)]">
-          {member.linkedin && (
-            <a
-              href={member.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${member.name}'s LinkedIn profile`}
-              className="p-2 rounded-full hover:bg-[var(--surface-highlight)] hover:text-[#4285F4] transition-colors"
-            >
-              <LinkedInIcon className="w-4 h-4" />
-            </a>
-          )}
-          {member.github && (
-            <a
-              href={member.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${member.name}'s GitHub profile`}
-              className="p-2 rounded-full hover:bg-[var(--surface-highlight)] hover:text-[var(--white)] transition-colors"
-            >
-              <GitHubIcon className="w-4 h-4" />
-            </a>
-          )}
-          {member.email && (
-            <a
-              href={`mailto:${member.email}`}
-              aria-label={`Email ${member.name}`}
-              className="p-2 rounded-full hover:bg-[var(--surface-highlight)] hover:text-[#EA4335] transition-colors"
-            >
-              <Mail className="w-4 h-4" />
-            </a>
-          )}
-          {!member.linkedin && !member.github && !member.email && (
-            <span className="font-mono text-[11px] text-[var(--muted)]">Core Contributor</span>
+          {/* Social Links (only shown if present) */}
+          {(member.linkedin || member.github || member.email) ? (
+            <div className="mt-5 pt-4 border-t border-[var(--line)] flex items-center gap-3 text-[var(--muted)]">
+              {member.linkedin && (
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name}'s LinkedIn profile`}
+                  className="p-2 rounded-full hover:bg-[var(--surface-highlight)] hover:text-[#4285F4] transition-colors"
+                >
+                  <LinkedInIcon className="w-4 h-4" />
+                </a>
+              )}
+              {member.github && (
+                <a
+                  href={member.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name}'s GitHub profile`}
+                  className="p-2 rounded-full hover:bg-[var(--surface-highlight)] hover:text-[var(--white)] transition-colors"
+                >
+                  <GitHubIcon className="w-4 h-4" />
+                </a>
+              )}
+              {member.email && (
+                <a
+                  href={`mailto:${member.email}`}
+                  aria-label={`Email ${member.name}`}
+                  className="p-2 rounded-full hover:bg-[var(--surface-highlight)] hover:text-[#EA4335] transition-colors"
+                >
+                  <Mail className="w-4 h-4" />
+                </a>
+              )}
+            </div>
+          ) : (
+            <div className="mt-5 pt-4 border-t border-[var(--line)] flex items-center justify-between text-[var(--muted)] font-mono text-[11px]">
+              <span>Core Member</span>
+              <span className="text-[10px] text-[#4285F4]">GDG 2026</span>
+            </div>
           )}
         </div>
-      </div>
+      </TiltCard>
     );
   };
 
   return (
     <div className="subpage">
+      {/* Desktop Floating Photo Follower (hidden on mobile and touch devices) */}
+      <div
+        ref={floatingImgRef}
+        aria-hidden="true"
+        className={`fixed pointer-events-none z-50 w-28 h-28 rounded-2xl overflow-hidden border-2 border-white shadow-2xl transition-opacity duration-200 hidden md:block ${
+          hoveredPhoto ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        }`}
+        style={{ top: 0, left: 0 }}
+      >
+        {hoveredPhoto && (
+          <Image
+            src={hoveredPhoto}
+            alt=""
+            fill
+            className="object-cover"
+          />
+        )}
+      </div>
+
       <div className="subpage-content">
         <span className="section-index font-mono text-xs uppercase tracking-wider text-[var(--muted)]">
           {"// OUR PEOPLE"}
@@ -126,24 +241,105 @@ export default function TeamPage() {
           <span>Passionate individuals driving innovation and community growth</span>
         </h1>
 
-        {/* Current Team Section */}
-        <section className="mt-16">
-          <div className="mb-8">
-            <span className="font-mono text-xs text-[#4285F4] uppercase tracking-wider font-semibold">
-              {"// CURRENT LEADERSHIP"}
-            </span>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
-              Current Team
-            </h2>
-          </div>
+        {/* ========================================================
+            NEW TEAM SECTION (Grouped as specified from Instagram)
+            ======================================================== */}
+        <div className="mt-16 space-y-16">
+          {/* 1. Lead Organizers */}
+          <section>
+            <div className="mb-6">
+              <span className="font-mono text-xs text-[#4285F4] uppercase tracking-wider font-semibold">
+                {"// CHAPTER LEADERSHIP"}
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
+                Lead Organizers
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {current.leadOrganizers.map((member) => renderMemberCard(member, true))}
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentTeam.map((member) => renderMemberCard(member, true))}
-          </div>
-        </section>
+          {/* 2. Technical Team */}
+          <section>
+            <div className="mb-6">
+              <span className="font-mono text-xs text-[#34A853] uppercase tracking-wider font-semibold">
+                {"// ENGINEERING & DEVELOPMENT"}
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
+                Technical Team
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {current.technicalTeam.map((member) => renderMemberCard(member, true))}
+            </div>
+          </section>
 
-        {/* Past Team Section */}
-        <section className="mt-24 border-t border-[var(--line)] pt-16">
+          {/* 3. Event Management */}
+          <section>
+            <div className="mb-6">
+              <span className="font-mono text-xs text-[#FBBC04] uppercase tracking-wider font-semibold">
+                {"// OPERATIONS & LOGISTICS"}
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
+                Event Management
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {current.eventManagement.map((member) => renderMemberCard(member, true))}
+            </div>
+          </section>
+
+          {/* 4. Graphic Designing */}
+          <section>
+            <div className="mb-6">
+              <span className="font-mono text-xs text-[#EA4335] uppercase tracking-wider font-semibold">
+                {"// DESIGN & BRANDING"}
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
+                Graphic Designing
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {current.graphicDesigning.map((member) => renderMemberCard(member, true))}
+            </div>
+          </section>
+
+          {/* 5. PR & Media Team */}
+          <section>
+            <div className="mb-6">
+              <span className="font-mono text-xs text-[#4285F4] uppercase tracking-wider font-semibold">
+                {"// OUTREACH & COMMUNICATIONS"}
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
+                PR &amp; Media Team
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {current.prMedia.map((member) => renderMemberCard(member, true))}
+            </div>
+          </section>
+
+          {/* 6. Sponsorship Team */}
+          <section>
+            <div className="mb-6">
+              <span className="font-mono text-xs text-[#34A853] uppercase tracking-wider font-semibold">
+                {"// CORPORATE RELATIONS & PARTNERSHIPS"}
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)] mt-1">
+                Sponsorship Team
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {current.sponsorshipTeam.map((member) => renderMemberCard(member, true))}
+            </div>
+          </section>
+        </div>
+
+        {/* ========================================================
+            PAST TEAM SECTION (Kept 100% as-is, all 9 past members)
+            ======================================================== */}
+        <section className="mt-28 border-t border-[var(--line)] pt-16">
           <div className="mb-12">
             <span className="font-mono text-xs text-[var(--muted)] uppercase tracking-wider font-semibold">
               {"// ARCHIVE & ALUMNI"}
@@ -162,7 +358,7 @@ export default function TeamPage() {
               Chapter Lead
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastLead.map((member) => renderMemberCard(member))}
+              {past.lead.map((member) => renderMemberCard(member))}
             </div>
           </div>
 
@@ -172,7 +368,7 @@ export default function TeamPage() {
               Technical Heads
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastTechnicalHeads.map((member) => renderMemberCard(member))}
+              {past.technicalHeads.map((member) => renderMemberCard(member))}
             </div>
           </div>
 
@@ -182,7 +378,7 @@ export default function TeamPage() {
               Core Team
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastCoreTeam.map((member) => renderMemberCard(member))}
+              {past.coreTeam.map((member) => renderMemberCard(member))}
             </div>
           </div>
         </section>

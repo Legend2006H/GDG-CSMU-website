@@ -5,6 +5,7 @@ import Image from "next/image";
 import eventsData from "@/data/events.json";
 import { EventItem } from "@/types/gdg";
 import { Calendar, MapPin, Users, ExternalLink, X, Clock, AlertCircle } from "lucide-react";
+import { TiltCard } from "@/components/animation/TiltCard";
 
 export default function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
@@ -38,54 +39,55 @@ export default function EventsPage() {
           {upcomingEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {upcomingEvents.map((event) => (
-                <div
-                  key={event.id}
-                  onClick={() => setSelectedEvent(event)}
-                  className="modern-card p-6 md:p-8 cursor-pointer flex flex-col justify-between group hover:border-[#4285F4] transition-all"
-                >
-                  <div className="space-y-4">
-                    <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-[var(--surface-highlight)]">
-                      <Image
-                        src={event.image}
-                        alt={event.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                      <div className="absolute top-3 left-3 bg-[#4285F4] text-white font-mono text-[11px] font-semibold px-2.5 py-1 rounded-full">
-                        {event.status}
+                <TiltCard key={event.id} maxTilt={7} scale={1.02} glare={true} className="h-full">
+                  <div
+                    onClick={() => setSelectedEvent(event)}
+                    className="modern-card p-6 md:p-8 cursor-pointer flex flex-col justify-between group hover:border-[#4285F4] transition-all h-full"
+                  >
+                    <div className="space-y-4">
+                      <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-[var(--surface-highlight)]">
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                        <div className="absolute top-3 left-3 bg-[#4285F4] text-white font-mono text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                          {event.status}
+                        </div>
+                      </div>
+
+                      <h3 className="text-xl md:text-2xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
+                        {event.title}
+                      </h3>
+
+                      <p className="text-sm text-[var(--muted-bright)] line-clamp-2">
+                        {event.description}
+                      </p>
+
+                      <div className="space-y-2 pt-2 font-mono text-xs text-[var(--muted)]">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-[#EA4335]" />
+                          <span>{event.displayDate}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-[#FBBC04]" />
+                          <span>Time: {event.time || "To be confirmed"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-[#34A853]" />
+                          <span>Location: {event.location}</span>
+                        </div>
                       </div>
                     </div>
 
-                    <h3 className="text-xl md:text-2xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
-                      {event.title}
-                    </h3>
-
-                    <p className="text-sm text-[var(--muted-bright)] line-clamp-2">
-                      {event.description}
-                    </p>
-
-                    <div className="space-y-2 pt-2 font-mono text-xs text-[var(--muted)]">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-[#EA4335]" />
-                        <span>{event.displayDate}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-[#FBBC04]" />
-                        <span>Time: {event.time || "To be confirmed"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-[#34A853]" />
-                        <span>Location: {event.location}</span>
-                      </div>
+                    <div className="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold text-[#8db1ff]">
+                      <span>View Event Details</span>
+                      <span>→</span>
                     </div>
                   </div>
-
-                  <div className="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold text-[#8db1ff]">
-                    <span>View Event Details</span>
-                    <span>→</span>
-                  </div>
-                </div>
+                </TiltCard>
               ))}
             </div>
           ) : (
@@ -108,54 +110,55 @@ export default function EventsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {pastEvents.map((event) => (
-              <div
-                key={event.id}
-                onClick={() => setSelectedEvent(event)}
-                className="modern-card p-6 md:p-8 cursor-pointer flex flex-col justify-between group hover:border-[var(--line)] transition-all"
-              >
-                <div className="space-y-4">
-                  <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-[var(--surface-highlight)]">
-                    <Image
-                      src={event.image}
-                      alt={event.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    <div className="absolute top-3 left-3 bg-[#222]/80 backdrop-blur-md text-[#bbb] font-mono text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/10">
-                      {event.status}
+              <TiltCard key={event.id} maxTilt={7} scale={1.02} glare={true} className="h-full">
+                <div
+                  onClick={() => setSelectedEvent(event)}
+                  className="modern-card p-6 md:p-8 cursor-pointer flex flex-col justify-between group hover:border-[var(--line)] transition-all h-full"
+                >
+                  <div className="space-y-4">
+                    <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-[var(--surface-highlight)]">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                      <div className="absolute top-3 left-3 bg-[#222]/80 backdrop-blur-md text-[#bbb] font-mono text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/10">
+                        {event.status}
+                      </div>
+                    </div>
+
+                    <h3 className="text-xl md:text-2xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
+                      {event.title}
+                    </h3>
+
+                    <p className="text-sm text-[var(--muted-bright)] line-clamp-2">
+                      {event.description}
+                    </p>
+
+                    <div className="space-y-2 pt-2 font-mono text-xs text-[var(--muted)]">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-[#EA4335]" />
+                        <span>{event.displayDate}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-[#34A853]" />
+                        <span>{event.location} · {event.mode}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-[#FBBC04]" />
+                        <span>Expected Attendees: {event.expectedAttendees}</span>
+                      </div>
                     </div>
                   </div>
 
-                  <h3 className="text-xl md:text-2xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
-                    {event.title}
-                  </h3>
-
-                  <p className="text-sm text-[var(--muted-bright)] line-clamp-2">
-                    {event.description}
-                  </p>
-
-                  <div className="space-y-2 pt-2 font-mono text-xs text-[var(--muted)]">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-[#EA4335]" />
-                      <span>{event.displayDate}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#34A853]" />
-                      <span>{event.location} · {event.mode}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-[#FBBC04]" />
-                      <span>Expected Attendees: {event.expectedAttendees}</span>
-                    </div>
+                  <div className="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold text-[var(--muted)] group-hover:text-[var(--white)]">
+                    <span>View Event Details</span>
+                    <span>→</span>
                   </div>
                 </div>
-
-                <div className="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold text-[var(--muted)] group-hover:text-[var(--white)]">
-                  <span>View Event Details</span>
-                  <span>→</span>
-                </div>
-              </div>
+              </TiltCard>
             ))}
           </div>
         </section>

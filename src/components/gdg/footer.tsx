@@ -4,12 +4,26 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ExternalLink, Mail, Phone, MapPin } from "lucide-react";
+import { MarqueeStrip } from "@/components/animation/MarqueeStrip";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="footer border-t border-[var(--line)] bg-[var(--surface)] text-[var(--muted)]">
+      {/* 2026 Seamless Footer Marquee */}
+      <MarqueeStrip
+        items={[
+          "CONNECT • LEARN • GROW",
+          "CSMU STUDENT DEVELOPERS",
+          "GOOGLE DEVELOPER GROUPS ON CAMPUS",
+          "BUILD FOR IMPACT",
+          "JOIN OUR COMMUNITY",
+        ]}
+        speed={32}
+        direction="right"
+      />
+
       <div className="footer-top max-w-[1200px] mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Col 1: Brand & intro */}
         <div className="footer-intro md:col-span-1">

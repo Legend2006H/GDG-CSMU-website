@@ -30,11 +30,17 @@ export interface TeamMember {
 }
 
 export interface TeamData {
-  current: TeamMember[];
+  current: {
+    leadOrganizers: TeamMember[];
+    technicalTeam: TeamMember[];
+    eventManagement: TeamMember[];
+    graphicDesigning: TeamMember[];
+    prMedia: TeamMember[];
+    sponsorshipTeam: TeamMember[];
+  };
   past: {
     lead: TeamMember[];
     technicalHeads: TeamMember[];
     coreTeam: TeamMember[];
   };
 }
-

@@ -5,8 +5,10 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, Calendar } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { DotGrid } from "./DotGrid";
 import { DottedChevron } from "./DottedChevron";
+import { Magnetic } from "@/components/animation/Magnetic";
 import {
   HERO_SCROLL_HEIGHT,
   SCRUB,
@@ -32,7 +34,24 @@ export function SplitHero() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    // Initial SplitText reveal for the headline on page entrance
+    document.fonts.ready.then(() => {
+      if (leftRef.current && rightRef.current) {
+        gsap.fromTo(
+          [leftRef.current, rightRef.current],
+          { yPercent: 110, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.9,
+            stagger: 0.09,
+            ease: "expo.out",
+          }
+        );
+      }
+    });
 
     const mm = gsap.matchMedia();
 
@@ -207,9 +226,9 @@ export function SplitHero() {
           {/* Accessible Title: single h1 for screen readers, split decorative presentation */}
           <h1
             className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 py-2 select-none w-full max-w-full"
-            aria-label="< GDGoC CSMU >"
+            aria-label="< GDG CSMU >"
           >
-            {/* LEFT HALF: [ < ] [ GDGoC ] */}
+            {/* LEFT HALF: [ < ] [ GDG ] */}
             <span
               ref={leftRef}
               aria-hidden="true"
@@ -219,7 +238,7 @@ export function SplitHero() {
                 <DottedChevron side="left" />
               </span>
               <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--white)] whitespace-nowrap">
-                GDGoC
+                GDG
               </span>
             </span>
 
@@ -250,20 +269,24 @@ export function SplitHero() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Link
-                href="/community"
-                className="button button-primary px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-lg hover:shadow-[#4285F4]/20 transition-all"
-              >
-                <span>Join Community</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/events"
-                className="button px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 border border-[rgba(255,255,255,0.2)] hover:border-[#4285F4] hover:bg-[rgba(66,133,244,0.08)] transition-all text-white bg-[rgba(255,255,255,0.04)]"
-              >
-                <Calendar className="w-4 h-4 text-[#EA4335]" />
-                <span>Upcoming Events</span>
-              </Link>
+              <Magnetic strength={0.3} padding={16}>
+                <Link
+                  href="/community"
+                  className="button button-primary px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-lg hover:shadow-[#4285F4]/20 transition-all"
+                >
+                  <span>Join Community</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Magnetic>
+              <Magnetic strength={0.3} padding={16}>
+                <Link
+                  href="/events"
+                  className="button px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 border border-[rgba(255,255,255,0.2)] hover:border-[#4285F4] hover:bg-[rgba(66,133,244,0.08)] transition-all text-white bg-[rgba(255,255,255,0.04)]"
+                >
+                  <Calendar className="w-4 h-4 text-[#EA4335]" />
+                  <span>Upcoming Events</span>
+                </Link>
+              </Magnetic>
             </div>
 
             {/* Bottom Stats Strip */}

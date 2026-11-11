@@ -21,30 +21,25 @@ export function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  // Scroll progress indicator
+  // Shrinking glass nav on scroll & fallback progress update
   useEffect(() => {
-    const header = document.querySelector<HTMLElement>(".topbar");
-    if (!header) return;
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 40);
 
-    let frame = 0;
-    const updateProgress = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
-        header.style.setProperty("--scroll-progress", `${progress}%`);
-      });
+      // Hairline progress fallback if animation-timeline not supported
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? (scrollY / max) * 100 : 0;
+      document.documentElement.style.setProperty("--scroll-progress-num", `${progress}`);
     };
 
-    window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress);
-    updateProgress();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("resize", updateProgress);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -67,7 +62,10 @@ export function Navbar() {
 
   return (
     <>
-      <header className="topbar">
+      <header className={`topbar ${isScrolled ? "scrolled" : ""}`}>
+        {/* Zero-JS CSS animation-timeline hairline progress bar */}
+        <div className="topbar-progress-bar" aria-hidden="true" />
+
         {/* Brand */}
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
           <div className="flex items-center gap-2">

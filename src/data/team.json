@@ -1,15 +1,98 @@
 {
-  "current": [
-    {
-      "name": "Hrushikesh Sarode",
-      "role": "Technical Head",
-      "tenure": "Aug 2026–Present",
-      "photo": null,
-      "linkedin": null,
-      "github": null,
-      "email": null
-    }
-  ],
+  "current": {
+    "leadOrganizers": [
+      {
+        "name": "Samiksha Mishra",
+        "role": "Lead Organizer",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      },
+      {
+        "name": "Laxmi Gajul",
+        "role": "Lead Organizer",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      },
+      {
+        "name": "Shaikh Umar",
+        "role": "Lead Organizer",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      }
+    ],
+    "technicalTeam": [
+      {
+        "name": "Hrushikesh Sarode",
+        "role": "Head, Technical Team",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      },
+      {
+        "name": "Md Kasid Shaikh",
+        "role": "Co-Head, Technical Team",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      }
+    ],
+    "eventManagement": [
+      {
+        "name": "Khushal Patil",
+        "role": "Head, Event Management",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      },
+      {
+        "name": "Krushna Shinde",
+        "role": "Co-Head, Event Management",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      }
+    ],
+    "graphicDesigning": [
+      {
+        "name": "Rakesh Nayak",
+        "role": "Head, Graphic Designing",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      }
+    ],
+    "prMedia": [
+      {
+        "name": "Chinmay Bhingarkar",
+        "role": "Head, PR & Media Team",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      }
+    ],
+    "sponsorshipTeam": [
+      {
+        "name": "Anushka Pawar",
+        "role": "Head, Sponsorship Team",
+        "photo": null,
+        "linkedin": null,
+        "github": null,
+        "email": null
+      }
+    ]
+  },
   "past": {
     "lead": [
       {
@@ -91,4 +174,3 @@
     ]
   }
 }
-

@@ -75,7 +75,9 @@ export function DotGrid({ className = "" }) {
       height = Math.ceil(rect.height);
       if (width === 0 || height === 0) return;
 
-      dpr = Math.min(window.devicePixelRatio || 1, PIXEL_RATIO_CAP);
+      const isMobile = window.innerWidth < 768;
+      const maxDpr = isMobile ? 1 : PIXEL_RATIO_CAP;
+      dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
 
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);

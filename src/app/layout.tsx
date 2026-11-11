@@ -3,6 +3,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/gdg/theme-provider";
 import { Navbar } from "@/components/gdg/navbar";
 import { Footer } from "@/components/gdg/footer";
+import { SmoothScrollProvider } from "@/components/animation/SmoothScrollProvider";
+import { Preloader } from "@/components/animation/Preloader";
+import { ViewTransitionHandler } from "@/components/animation/ViewTransitionHandler";
 
 export const metadata: Metadata = {
   title: "GDG CSMU | Google Developer Group on Campus CSMU",
@@ -23,9 +26,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col antialiased">
         <ThemeProvider>
-          <Navbar />
-          <main className="flex-1 w-full">{children}</main>
-          <Footer />
+          <SmoothScrollProvider>
+            <Preloader />
+            <ViewTransitionHandler />
+            <Navbar />
+            <main className="flex-1 w-full">{children}</main>
+            <Footer />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>
