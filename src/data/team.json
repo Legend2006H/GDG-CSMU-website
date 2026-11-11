@@ -1,0 +1,94 @@
+{
+  "current": [
+    {
+      "name": "Hrushikesh Sarode",
+      "role": "Technical Head",
+      "tenure": "Aug 2026–Present",
+      "photo": null,
+      "linkedin": null,
+      "github": null,
+      "email": null
+    }
+  ],
+  "past": {
+    "lead": [
+      {
+        "name": "Tanisha Hegde",
+        "role": "GDGoC Organizer",
+        "photo": "/images/team/tanisha.jpeg",
+        "linkedin": "https://www.linkedin.com/in/tanisha-hegde-b9bb44268/",
+        "github": null,
+        "email": "gdgoc.csmu@gmail.com"
+      }
+    ],
+    "technicalHeads": [
+      {
+        "name": "Varad Madhav",
+        "role": "Technical Head (Ai/Ml)",
+        "photo": "/images/team/varad.jpeg",
+        "linkedin": "https://www.linkedin.com/in/varadmadhav/",
+        "github": "https://github.com/Varadmadhav",
+        "email": null
+      },
+      {
+        "name": "Prathamesh Padher",
+        "role": "Technical Head (Frontend)",
+        "photo": "/images/team/prathamesh.jpeg",
+        "linkedin": "https://www.linkedin.com/in/prathamesh-padher-6bb094269/",
+        "github": "https://github.com/PrathameshPadher?tab=repositories",
+        "email": null
+      }
+    ],
+    "coreTeam": [
+      {
+        "name": "Aarya Shewale",
+        "role": "UI/UX Head",
+        "photo": "/images/team/aarya.jpeg",
+        "linkedin": "https://www.linkedin.com/in/aarya-shewale-4b04712ab/",
+        "github": "https://github.com/AaryaShewale07",
+        "email": null
+      },
+      {
+        "name": "Jayesh Jadhav",
+        "role": "Management and Design Head",
+        "photo": "/images/team/jayesh1.jpeg",
+        "linkedin": "https://www.linkedin.com/in/jayeshvj/",
+        "github": "https://github.com/jayxvj",
+        "email": null
+      },
+      {
+        "name": "Sakshi Gollar",
+        "role": "Social Media Head",
+        "photo": "/images/team/sakshi.jpeg",
+        "linkedin": "https://www.linkedin.com/in/sakshigollar31/",
+        "github": "https://github.com/sakshig3101/sak.git",
+        "email": null
+      },
+      {
+        "name": "Pratik Harugade",
+        "role": "Management Head",
+        "photo": "/images/team/pratik.jpeg",
+        "linkedin": "https://www.linkedin.com/in/pratik-pramod-harugade/",
+        "github": "https://github.com/ppharugade",
+        "email": null
+      },
+      {
+        "name": "Vallabh Patil",
+        "role": "Media Head",
+        "photo": "/images/team/patil.jpeg",
+        "linkedin": "https://www.linkedin.com/in/vallabh-patil-8810ba374/",
+        "github": "https://github.com/Patil2004-hash",
+        "email": null
+      },
+      {
+        "name": "Prathamesh Tripathi",
+        "role": "Operational Head",
+        "photo": "/images/team/prathameshtripathi.jpeg",
+        "linkedin": "https://www.linkedin.com/in/tripathiprathamesh/",
+        "github": null,
+        "email": null
+      }
+    ]
+  }
+}
+
