@@ -7,6 +7,7 @@ import { SmoothScrollProvider } from "@/components/animation/SmoothScrollProvide
 import { Preloader } from "@/components/animation/Preloader";
 import { ViewTransitionHandler } from "@/components/animation/ViewTransitionHandler";
 import { TouchFollower } from "@/components/animation/TouchFollower";
+import { CustomCursor } from "@/components/animation/CustomCursor";
 
 export const metadata: Metadata = {
   title: "GDG CSMU | Google Developer Group on Campus CSMU",
@@ -30,6 +31,7 @@ export default function RootLayout({
           <SmoothScrollProvider>
             <Preloader />
             <TouchFollower />
+            <CustomCursor />
             <ViewTransitionHandler />
             <Navbar />
             <main className="flex-1 w-full">{children}</main>

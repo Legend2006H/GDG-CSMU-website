@@ -61,6 +61,47 @@
   display: block !important;
 }
 
+/* Custom Cursor Styling */
+html.has-custom-cursor,
+html.has-custom-cursor body,
+html.has-custom-cursor *,
+html.has-custom-cursor a,
+html.has-custom-cursor button,
+html.has-custom-cursor [role="button"],
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor .cursor-pointer {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  background-color: #ffffff;
+}
+
+.cursor-ring {
+  border-color: #ffffff;
+  opacity: 0.7;
+}
+
+.cursor-label {
+  color: #ffffff;
+}
+
+[data-theme="light"] .cursor-dot,
+:root.light .cursor-dot {
+  background-color: #111111;
+}
+
+[data-theme="light"] .cursor-ring,
+:root.light .cursor-ring {
+  border-color: #111111;
+}
+
+[data-theme="light"] .cursor-label,
+:root.light .cursor-label {
+  color: #111111;
+}
+
 @keyframes touch-ripple {
   0% {
     width: 0px;

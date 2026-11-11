@@ -8,6 +8,7 @@ interface MagneticProps {
   children: React.ReactElement;
   className?: string;
   strength?: number; // default 0.3
+  maxPull?: number;  // max px pull, default 8
   padding?: number;  // expanded hit area in px, default 24
 }
 
@@ -15,6 +16,7 @@ export function Magnetic({
   children,
   className = "",
   strength = MOTION_TOKENS.magneticFollowScale,
+  maxPull = 8,
   padding = 24,
 }: MagneticProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,8 +48,12 @@ export function Magnetic({
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        const deltaX = (e.clientX - centerX) * strength;
-        const deltaY = (e.clientY - centerY) * strength;
+        let deltaX = (e.clientX - centerX) * strength;
+        let deltaY = (e.clientY - centerY) * strength;
+
+        // Cap to maxPull (max 8px)
+        deltaX = Math.max(-maxPull, Math.min(maxPull, deltaX));
+        deltaY = Math.max(-maxPull, Math.min(maxPull, deltaY));
 
         xTo(deltaX);
         yTo(deltaY);
@@ -126,7 +132,7 @@ export function Magnetic({
         gsap.killTweensOf(target);
       };
     }
-  }, [strength]);
+  }, [strength, maxPull]);
 
   return (
     <div

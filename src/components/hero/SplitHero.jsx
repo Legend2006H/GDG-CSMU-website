@@ -269,7 +269,7 @@ export function SplitHero() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Magnetic strength={0.3} padding={16}>
+              <Magnetic strength={0.3} maxPull={8} padding={16}>
                 <Link
                   href="/community"
                   className="button button-primary px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-lg hover:shadow-[#4285F4]/20 transition-all"
@@ -278,15 +278,13 @@ export function SplitHero() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Magnetic>
-              <Magnetic strength={0.3} padding={16}>
-                <Link
-                  href="/events"
-                  className="button px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 border border-[rgba(255,255,255,0.2)] hover:border-[#4285F4] hover:bg-[rgba(66,133,244,0.08)] transition-all text-white bg-[rgba(255,255,255,0.04)]"
-                >
-                  <Calendar className="w-4 h-4 text-[#EA4335]" />
-                  <span>Upcoming Events</span>
-                </Link>
-              </Magnetic>
+              <Link
+                href="/events"
+                className="button px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 border border-[rgba(255,255,255,0.2)] hover:border-[#4285F4] hover:bg-[rgba(66,133,244,0.08)] transition-all text-white bg-[rgba(255,255,255,0.04)]"
+              >
+                <Calendar className="w-4 h-4 text-[#EA4335]" />
+                <span>Upcoming Events</span>
+              </Link>
             </div>
 
             {/* Bottom Stats Strip */}

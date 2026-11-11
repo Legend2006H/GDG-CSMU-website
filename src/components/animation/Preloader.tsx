@@ -113,7 +113,7 @@ export function Preloader() {
     <aside
       ref={curtainRef}
       aria-label="Loading GDG CSMU"
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#101010] text-white"
+      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-[#101010] text-white"
       style={{ clipPath: "inset(0 0 0% 0)" }}
     >
       <div className="flex flex-col items-center gap-6">

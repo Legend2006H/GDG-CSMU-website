@@ -175,12 +175,10 @@ export default function Home() {
             A student developer community at CSMU. We connect, learn and grow together, and turn what we learn into work our community can use.
           </p>
           <div className="mt-6 pt-4 flex items-center gap-4">
-            <Magnetic strength={0.25} padding={12}>
-              <Link href="/about" className="button button-primary">
-                <span>Read Our Full Story</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Magnetic>
+            <Link href="/about" className="button button-primary">
+              <span>Read Our Full Story</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -211,7 +209,7 @@ export default function Home() {
 
         <div ref={eventsCardsRef} className="space-y-8">
           {nextEvent ? (
-            <div className="stack-card sticky top-24 z-10 modern-card relative overflow-hidden p-8 md:p-12 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-3xl will-change-transform shadow-2xl">
+            <div data-cursor="VIEW" className="stack-card sticky top-24 z-10 modern-card relative overflow-hidden p-8 md:p-12 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-3xl will-change-transform shadow-2xl">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4285F4] via-[#EA4335] to-[#FBBC04]" />
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -249,12 +247,10 @@ export default function Home() {
                   </div>
 
                   <div className="pt-4 flex items-center gap-4">
-                    <Magnetic strength={0.25} padding={12}>
-                      <Link href="/events" className="button button-primary">
-                        <span>View Event Details</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    </Magnetic>
+                    <Link href="/events" className="button button-primary" data-cursor="VIEW">
+                      <span>View Event Details</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
 
@@ -368,6 +364,7 @@ export default function Home() {
               <TiltCard key={item.title} maxTilt={10} scale={1.04} glare={true} className="h-full">
                 <Link
                   href="/technologies"
+                  data-cursor="EXPLORE"
                   className="modern-card p-5 text-center flex flex-col items-center justify-center gap-3 hover:border-[var(--white)] transition-all h-full"
                 >
                   <div
@@ -405,8 +402,8 @@ export default function Home() {
           </p>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <Magnetic strength={0.3} padding={16}>
-              <Link href="/community" className="button button-primary">
+            <Magnetic strength={0.3} maxPull={8} padding={16}>
+              <Link href="/community" data-cursor="JOIN" className="button button-primary">
                 <span>Become a Member</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>

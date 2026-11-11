@@ -41,6 +41,7 @@ export default function EventsPage() {
               {upcomingEvents.map((event) => (
                 <TiltCard key={event.id} maxTilt={7} scale={1.02} glare={true} className="h-full">
                   <div
+                    data-cursor="VIEW"
                     onClick={() => setSelectedEvent(event)}
                     className="modern-card p-6 md:p-8 cursor-pointer flex flex-col justify-between group hover:border-[#4285F4] transition-all h-full"
                   >
@@ -112,6 +113,7 @@ export default function EventsPage() {
             {pastEvents.map((event) => (
               <TiltCard key={event.id} maxTilt={7} scale={1.02} glare={true} className="h-full">
                 <div
+                  data-cursor="VIEW"
                   onClick={() => setSelectedEvent(event)}
                   className="modern-card p-6 md:p-8 cursor-pointer flex flex-col justify-between group hover:border-[var(--line)] transition-all h-full"
                 >
