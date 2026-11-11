@@ -55,9 +55,9 @@ export function SplitHero() {
 
     const mm = gsap.matchMedia();
 
-    // Animate on both desktop and mobile as long as prefers-reduced-motion is no-preference
+    // Animate pinned split-hero ONLY on desktop (min-width: 768px) and when motion is allowed
     mm.add(
-      "(prefers-reduced-motion: no-preference)",
+      "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
       () => {
         setIsAnimated(true);
 
@@ -196,21 +196,33 @@ export function SplitHero() {
   return (
     <section
       ref={heroRef}
-      className="relative w-full bg-[var(--bg)]"
-      style={{ height: isAnimated ? HERO_SCROLL_HEIGHT : "100svh" }}
+      className="relative w-full bg-[var(--bg)] min-h-[100svh] md:min-h-0"
+      style={{ height: isAnimated ? HERO_SCROLL_HEIGHT : undefined }}
     >
-      {/* Pinned inner viewport */}
+      {/* Background Dot-Grid with Mouse & Touch Glow */}
+      <DotGrid />
+
+      {/* Soft Google ambient glows behind content on mobile (step 4) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-10 -left-10 w-64 h-64 rounded-full bg-[#4285F4] opacity-[0.22] blur-[80px] md:hidden"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-10 -right-10 w-64 h-64 rounded-full bg-[#34A853] opacity-[0.22] blur-[80px] md:hidden"
+      />
+
+      {/* =========================================================================
+          DESKTOP HERO (>=768px): Pinned 160vh scroll-to-open split hero (untouched)
+         ========================================================================= */}
       <div
         ref={stickyRef}
         className={
           isAnimated
-            ? "sticky top-0 h-screen overflow-hidden flex flex-col justify-between items-center px-4 sm:px-6 py-6 md:py-10 z-10"
-            : "relative h-screen overflow-hidden flex flex-col justify-between items-center px-4 sm:px-6 py-6 md:py-10 z-10"
+            ? "sticky top-0 h-screen overflow-hidden hidden md:flex flex-col justify-between items-center px-4 sm:px-6 py-6 md:py-10 z-10"
+            : "relative h-screen overflow-hidden hidden md:flex flex-col justify-between items-center px-4 sm:px-6 py-6 md:py-10 z-10"
         }
       >
-        {/* Background Dot-Grid with Mouse Glow */}
-        <DotGrid />
-
         {/* Floating navbar clearance */}
         <div className="w-full h-12 sm:h-16 flex-none" />
 
@@ -312,7 +324,7 @@ export function SplitHero() {
           </div>
         </div>
 
-        {/* Scroll hint: only rendered when animation is active */}
+        {/* Desktop scroll hint: only rendered when animation is active */}
         {isAnimated ? (
           <div
             ref={hintRef}
@@ -326,6 +338,116 @@ export function SplitHero() {
         ) : (
           <div className="w-full h-8 flex-none" />
         )}
+      </div>
+
+      {/* =========================================================================
+          MOBILE HERO (<768px): Exact 100svh viewport fill, no pin, full content
+         ========================================================================= */}
+      <div className="md:hidden relative z-10 w-full h-[100svh] min-h-[100svh] max-h-[100svh] flex flex-col justify-between items-center px-4 pt-24 pb-4 overflow-hidden max-w-sm sm:max-w-md mx-auto">
+        {/* 1. Eyebrow: 11px, tracking 0.18em, no mid-word wrap */}
+        <div className="w-full text-center flex-none">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--hero-eyebrow)] font-semibold truncate px-1">
+            GOOGLE DEVELOPER GROUPS ON CAMPUS · CSMU PANVEL
+          </p>
+        </div>
+
+        {/* 2. Title: clamp(44px, 13vw, 64px) with matching dotted chevrons */}
+        <h1
+          className="flex items-center justify-center gap-2 py-1 select-none w-full flex-none"
+          aria-label="< GDG CSMU >"
+        >
+          <DottedChevron side="left" className="h-[clamp(44px,13vw,64px)] w-auto" />
+          <span className="font-bold tracking-tight text-[clamp(44px,13vw,64px)] text-[var(--hero-title)] leading-none">
+            GDG
+          </span>
+          <span className="font-bold tracking-tight text-[clamp(44px,13vw,64px)] text-[var(--hero-title)] leading-none">
+            CSMU
+          </span>
+          <DottedChevron side="right" className="h-[clamp(44px,13vw,64px)] w-auto" />
+        </h1>
+
+        {/* 3. Subtext: 16px, line-height 1.6, max 34ch, centered */}
+        <p className="text-[15px] sm:text-[16px] leading-[1.6] text-[var(--muted-bright)] max-w-[34ch] text-center mx-auto flex-none">
+          Join the official Google Developers Group at CSMU. A community of
+          passionate developers building the future together.
+        </p>
+
+        {/* 4. Stacked CTAs (<480px full-width, 52px tall each, gap 12px) */}
+        <div className="w-full flex flex-col gap-3 flex-none">
+          <Link
+            href="/community"
+            className="button button-primary w-full h-[52px] min-h-[52px] rounded-full text-sm font-semibold flex items-center justify-center gap-2 shadow-lg"
+          >
+            <span>Join Community</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link
+            href="/events"
+            className="w-full h-[52px] min-h-[52px] rounded-full text-sm font-semibold flex items-center justify-center gap-2 border border-[var(--line)] bg-[var(--surface-highlight)] text-[var(--white)] hover:border-[#4285F4] transition-colors"
+          >
+            <Calendar className="w-4 h-4 text-[#EA4335]" />
+            <span>Upcoming Events</span>
+          </Link>
+        </div>
+
+        {/* 5. Stats Row: 3-column grid, full-width, divided, 20px bold white + 11px grey mono */}
+        <div className="w-full grid grid-cols-3 divide-x divide-[var(--line)] border-y border-[var(--line)] py-2.5 my-0.5 bg-[var(--surface)]/40 rounded-xl flex-none">
+          <div className="text-center px-1">
+            <span className="block text-[20px] font-bold text-[var(--white)] font-mono leading-none">
+              749+
+            </span>
+            <span className="text-[11px] font-mono text-[var(--muted)] uppercase tracking-wider block mt-1">
+              members
+            </span>
+          </div>
+          <div className="text-center px-1">
+            <span className="block text-[20px] font-bold text-[var(--white)] font-mono leading-none">
+              15+
+            </span>
+            <span className="text-[11px] font-mono text-[var(--muted)] uppercase tracking-wider block mt-1">
+              events
+            </span>
+          </div>
+          <div className="text-center px-1">
+            <span className="block text-[20px] font-bold text-[var(--white)] font-mono leading-none">
+              5+
+            </span>
+            <span className="text-[11px] font-mono text-[var(--muted)] uppercase tracking-wider block mt-1">
+              workshops
+            </span>
+          </div>
+        </div>
+
+        {/* 6. Compact Next Event mini-card with 3px Google gradient top strip */}
+        <div className="w-full relative overflow-hidden rounded-2xl bg-[var(--surface-card)] border border-[var(--card-border)] p-3 space-y-1 shadow-md flex-none">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC04] to-[#34A853]" />
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="font-bold text-[#8db1ff] tracking-tight">
+              NEXT: GDG Orientation
+            </span>
+            <span className="text-[11px] text-[var(--muted)]">
+              Mon 17 Nov 2026
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] font-mono text-[var(--muted-bright)] pt-0.5">
+            <span>Venue / Time: To be confirmed</span>
+            <Link
+              href="/events"
+              className="text-[#8db1ff] font-semibold hover:underline flex items-center gap-1"
+            >
+              <span>View Details</span>
+              <span>→</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* 7. Scroll cue at bottom edge: animated chevron + SCROLL in 11px mono */}
+        <div className="flex flex-col items-center justify-center gap-0.5 select-none pointer-events-none flex-none pb-1">
+          <span className="font-mono text-[11px] text-[var(--muted)] tracking-[0.2em] uppercase">
+            SCROLL
+          </span>
+          <ChevronDown className="w-3.5 h-3.5 text-[var(--muted)] animate-bounce" />
+        </div>
       </div>
     </section>
   );

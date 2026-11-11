@@ -61,8 +61,9 @@ export function DotGrid({ className = "" }) {
       ctx.fillStyle = getBgColor();
       ctx.fillRect(0, 0, width, height);
 
+      const isMobile = window.innerWidth < 768;
       const rgb = getDotRgb();
-      const dotAlpha = isLightMode() ? 0.22 : BASE_ALPHA;
+      const dotAlpha = isLightMode() ? 0.22 : (isMobile ? 0.12 : BASE_ALPHA);
       ctx.fillStyle = `rgba(${rgb}, ${dotAlpha})`;
       ctx.beginPath();
       for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
@@ -147,7 +148,8 @@ export function DotGrid({ className = "" }) {
       const glowDistSq = currentGlowRadius * currentGlowRadius;
 
       // 1. Draw base dots outside glow radius in one single batch pass
-      ctx.fillStyle = `rgba(${rgb}, ${BASE_ALPHA})`;
+      const baseDotAlpha = isLightMode() ? 0.22 : (isMobile ? 0.12 : BASE_ALPHA);
+      ctx.fillStyle = `rgba(${rgb}, ${baseDotAlpha})`;
       ctx.beginPath();
       for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
         for (let y = DOT_SPACING / 2; y < height; y += DOT_SPACING) {
@@ -180,7 +182,7 @@ export function DotGrid({ className = "" }) {
           if (distSq < glowDistSq) {
             const d = Math.sqrt(distSq);
             const glow = Math.max(0, 1 - d / currentGlowRadius);
-            const alpha = BASE_ALPHA + glow * currentGlowAlphaBonus;
+            const alpha = baseDotAlpha + glow * currentGlowAlphaBonus;
             const radius = DOT_BASE_RADIUS + glow * DOT_GLOW_RADIUS_BONUS;
 
             ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
