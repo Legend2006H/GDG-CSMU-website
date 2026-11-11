@@ -13,12 +13,10 @@ import {
   PIXEL_RATIO_CAP,
 } from "./heroConfig";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 
 export function DotGrid({ className = "" }) {
   const canvasRef = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
-  const isCoarse = useCoarsePointer();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,11 +34,18 @@ export function DotGrid({ className = "" }) {
     let isVisible = true;
     let resizeTimer = null;
 
-    // Mouse coordinates in canvas local space
+    // Pointer coordinates in canvas local space
     let targetX = -9999;
     let targetY = -9999;
     let renderedX = -9999;
     let renderedY = -9999;
+
+    // Mobile auto-drift & tap burst variables
+    let isInteracting = false;
+    let driftAngle = 0;
+    let burstActive = false;
+    let burstRadius = GLOW_RADIUS;
+    let burstAlpha = GLOW_ALPHA_BONUS;
 
     const isLightMode = () =>
       document.documentElement.classList.contains("light") ||
@@ -49,8 +54,7 @@ export function DotGrid({ className = "" }) {
     const getBgColor = () => (isLightMode() ? "#f9f9fb" : "#101010");
     const getDotRgb = () => (isLightMode() ? "15, 23, 42" : "255, 255, 255");
 
-    const isOffCondition = () =>
-      prefersReducedMotion || isCoarse || window.innerWidth < 768;
+    const isOffCondition = () => prefersReducedMotion;
 
     const drawStaticDotField = () => {
       ctx.clearRect(0, 0, width, height);
@@ -76,6 +80,7 @@ export function DotGrid({ className = "" }) {
       if (width === 0 || height === 0) return;
 
       const isMobile = window.innerWidth < 768;
+      // Cap DPR 1 on mobile, 2 on desktop
       const maxDpr = isMobile ? 1 : PIXEL_RATIO_CAP;
       dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
 
@@ -95,14 +100,42 @@ export function DotGrid({ className = "" }) {
     const render = () => {
       if (!isVisible || document.hidden) return;
 
-      // Smooth mouse lerp
+      const isMobile = window.innerWidth < 768;
+
+      // When finger lifts on mobile, drift the glow slowly (20s loop)
+      if (isMobile && !isInteracting) {
+        driftAngle += 0.005; // ~20s cycle
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const driftRadiusX = Math.min(width * 0.35, 140);
+        const driftRadiusY = Math.min(height * 0.25, 100);
+
+        targetX = centerX + Math.cos(driftAngle) * driftRadiusX;
+        targetY = centerY + Math.sin(driftAngle * 1.5) * driftRadiusY;
+      }
+
+      // Smooth lerp
       renderedX += (targetX - renderedX) * MOUSE_LERP;
       renderedY += (targetY - renderedY) * MOUSE_LERP;
+
+      // Handle tap glow burst on mobile (180px -> 260px, fade over 0.6s)
+      let currentGlowRadius = GLOW_RADIUS;
+      let currentGlowAlphaBonus = GLOW_ALPHA_BONUS;
+
+      if (burstActive) {
+        burstRadius += (260 - burstRadius) * 0.12;
+        burstAlpha *= 0.94;
+        currentGlowRadius = burstRadius;
+        currentGlowAlphaBonus = burstAlpha;
+
+        if (burstAlpha <= 0.05) {
+          burstActive = false;
+        }
+      }
 
       // Trail pass: fill canvas with background color at TRAIL_FADE_ALPHA
       ctx.globalCompositeOperation = "source-over";
       const bg = getBgColor();
-      // Convert hex to rgba with TRAIL_FADE_ALPHA
       ctx.fillStyle =
         bg === "#101010"
           ? `rgba(16, 16, 16, ${TRAIL_FADE_ALPHA})`
@@ -110,7 +143,7 @@ export function DotGrid({ className = "" }) {
       ctx.fillRect(0, 0, width, height);
 
       const rgb = getDotRgb();
-      const glowDistSq = GLOW_RADIUS * GLOW_RADIUS;
+      const glowDistSq = currentGlowRadius * currentGlowRadius;
 
       // 1. Draw base dots outside glow radius in one single batch pass
       ctx.fillStyle = `rgba(${rgb}, ${BASE_ALPHA})`;
@@ -126,17 +159,17 @@ export function DotGrid({ className = "" }) {
       }
       ctx.fill();
 
-      // 2. Draw glowing dots within GLOW_RADIUS
+      // 2. Draw glowing dots within glow radius
       const minX = Math.max(
         DOT_SPACING / 2,
-        Math.floor((renderedX - GLOW_RADIUS) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
+        Math.floor((renderedX - currentGlowRadius) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
       );
-      const maxX = Math.min(width, renderedX + GLOW_RADIUS);
+      const maxX = Math.min(width, renderedX + currentGlowRadius);
       const minY = Math.max(
         DOT_SPACING / 2,
-        Math.floor((renderedY - GLOW_RADIUS) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
+        Math.floor((renderedY - currentGlowRadius) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
       );
-      const maxY = Math.min(height, renderedY + GLOW_RADIUS);
+      const maxY = Math.min(height, renderedY + currentGlowRadius);
 
       for (let x = minX; x <= maxX; x += DOT_SPACING) {
         for (let y = minY; y <= maxY; y += DOT_SPACING) {
@@ -145,8 +178,8 @@ export function DotGrid({ className = "" }) {
           const distSq = dx * dx + dy * dy;
           if (distSq < glowDistSq) {
             const d = Math.sqrt(distSq);
-            const glow = Math.max(0, 1 - d / GLOW_RADIUS);
-            const alpha = BASE_ALPHA + glow * GLOW_ALPHA_BONUS;
+            const glow = Math.max(0, 1 - d / currentGlowRadius);
+            const alpha = BASE_ALPHA + glow * currentGlowAlphaBonus;
             const radius = DOT_BASE_RADIUS + glow * DOT_GLOW_RADIUS_BONUS;
 
             ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
@@ -165,11 +198,46 @@ export function DotGrid({ className = "" }) {
       const rect = canvas.getBoundingClientRect();
       targetX = e.clientX - rect.left;
       targetY = e.clientY - rect.top;
+      isInteracting = true;
     };
 
     const handlePointerLeave = () => {
-      targetX = -9999;
-      targetY = -9999;
+      isInteracting = false;
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile) {
+        targetX = -9999;
+        targetY = -9999;
+      }
+    };
+
+    // Touch handlers for mobile
+    const handleTouchStart = (e) => {
+      if (isOffCondition()) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = canvas.getBoundingClientRect();
+      targetX = touch.clientX - rect.left;
+      targetY = touch.clientY - rect.top;
+      isInteracting = true;
+
+      // Trigger tap burst
+      burstActive = true;
+      burstRadius = GLOW_RADIUS;
+      burstAlpha = GLOW_ALPHA_BONUS;
+    };
+
+    const handleTouchMove = (e) => {
+      if (isOffCondition()) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = canvas.getBoundingClientRect();
+      targetX = touch.clientX - rect.left;
+      targetY = touch.clientY - rect.top;
+      isInteracting = true;
+    };
+
+    const handleTouchEnd = () => {
+      isInteracting = false;
     };
 
     const handleVisibilityChange = () => {
@@ -196,10 +264,8 @@ export function DotGrid({ className = "" }) {
     };
 
     const handleThemeChange = () => {
-      // Immediately clear to new background with zero delay
       ctx.fillStyle = getBgColor();
       ctx.fillRect(0, 0, width, height);
-
       if (isOffCondition()) {
         drawStaticDotField();
       }
@@ -215,7 +281,6 @@ export function DotGrid({ className = "" }) {
       attributeFilter: ["data-theme", "class"],
     });
 
-    // Pause when hero is off-screen
     const observer = new IntersectionObserver(
       ([entry]) => {
         isVisible = entry.isIntersecting;
@@ -233,6 +298,9 @@ export function DotGrid({ className = "" }) {
       observer.observe(heroContainer);
       heroContainer.addEventListener("pointermove", handlePointerMove, { passive: true });
       heroContainer.addEventListener("pointerleave", handlePointerLeave);
+      heroContainer.addEventListener("touchstart", handleTouchStart, { passive: true });
+      heroContainer.addEventListener("touchmove", handleTouchMove, { passive: true });
+      heroContainer.addEventListener("touchend", handleTouchEnd, { passive: true });
     }
 
     window.addEventListener("resize", handleDebouncedResize);
@@ -253,13 +321,16 @@ export function DotGrid({ className = "" }) {
       if (heroContainer) {
         heroContainer.removeEventListener("pointermove", handlePointerMove);
         heroContainer.removeEventListener("pointerleave", handlePointerLeave);
+        heroContainer.removeEventListener("touchstart", handleTouchStart);
+        heroContainer.removeEventListener("touchmove", handleTouchMove);
+        heroContainer.removeEventListener("touchend", handleTouchEnd);
       }
       window.removeEventListener("resize", handleDebouncedResize);
       window.removeEventListener("theme-change", handleThemeChange);
       themeObserver.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [prefersReducedMotion, isCoarse]);
+  }, [prefersReducedMotion]);
 
   return (
     <canvas
@@ -271,4 +342,3 @@ export function DotGrid({ className = "" }) {
 }
 
 export default DotGrid;
-

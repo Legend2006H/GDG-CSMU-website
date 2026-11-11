@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useCallback, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -23,9 +25,67 @@ export function TiltCard({
   const [style, setStyle] = useState<React.CSSProperties>({});
   const [glareStyle, setGlareStyle] = useState<React.CSSProperties>({ opacity: 0 });
 
+  // Mobile Tap + Scroll lift effect
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (isMobile && !prefersReducedMotion) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Lift automatically as card scrolls into view
+      const st = ScrollTrigger.create({
+        trigger: card,
+        start: "top 80%",
+        end: "top 30%",
+        onEnter: () => {
+          gsap.fromTo(
+            card,
+            { y: 8, opacity: 0.95 },
+            { y: 0, opacity: 1, duration: 0.4, ease: "power2.out", overwrite: "auto" }
+          );
+        },
+      });
+
+      // Lift on mobile tap
+      const handleTouchStart = () => {
+        gsap.to(card, {
+          y: -4,
+          duration: 0.2,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      };
+
+      const handleTouchEnd = () => {
+        gsap.to(card, {
+          y: 0,
+          duration: 0.4,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      };
+
+      card.addEventListener("touchstart", handleTouchStart, { passive: true });
+      card.addEventListener("touchend", handleTouchEnd, { passive: true });
+      card.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+
+      return () => {
+        st.kill();
+        card.removeEventListener("touchstart", handleTouchStart);
+        card.removeEventListener("touchend", handleTouchEnd);
+        card.removeEventListener("touchcancel", handleTouchEnd);
+        gsap.killTweensOf(card);
+      };
+    }
+  }, []);
+
+  // Desktop 3D Tilt + Specular Glare (works on every single hover)
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      // Only execute on desktop fine pointer devices
       if (window.matchMedia("(pointer: coarse)").matches) return;
 
       const card = cardRef.current;
@@ -35,14 +95,12 @@ export function TiltCard({
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Calculate normalized position -1 to 1
       const xPct = (x / rect.width - 0.5) * 2;
       const yPct = (y / rect.height - 0.5) * 2;
 
       const rotateX = -yPct * maxTilt;
       const rotateY = xPct * maxTilt;
 
-      // Apply dynamic 3D transform instantaneously with zero tween conflict
       setStyle({
         transform: `perspective(${perspective}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`,
         transition: "transform 0.08s ease-out",
@@ -53,7 +111,7 @@ export function TiltCard({
         const glareY = Math.round((y / rect.height) * 100);
         setGlareStyle({
           opacity: 1,
-          background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 65%)`,
+          background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 65%)`,
           transition: "opacity 0.15s ease",
         });
       }
@@ -62,7 +120,6 @@ export function TiltCard({
   );
 
   const handlePointerLeave = useCallback(() => {
-    // Smooth release back to flat resting state on every mouse leave
     setStyle({
       transform: `perspective(${perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`,
       transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",

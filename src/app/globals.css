@@ -43,6 +43,25 @@
   --card-border: #e0e0e0;
 }
 
+@keyframes touch-ripple {
+  0% {
+    width: 0px;
+    height: 0px;
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  100% {
+    width: 90px;
+    height: 90px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.6);
+  }
+}
+
+.animate-touch-ripple {
+  animation: touch-ripple 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes marquee-scroll-left {
   from {
     transform: translate3d(0, 0, 0);

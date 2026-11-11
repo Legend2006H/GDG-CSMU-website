@@ -1,10 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, FolderGit2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { TiltCard } from "@/components/animation/TiltCard";
 
 export default function ProjectsPage() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const projects = [
     {
       title: "GDG CSMU Official Website",
@@ -35,6 +39,24 @@ export default function ProjectsPage() {
     },
   ];
 
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const scrollLeft = scrollContainerRef.current.scrollLeft;
+    const width = scrollContainerRef.current.clientWidth;
+    const index = Math.round(scrollLeft / width);
+    setActiveSlide(index);
+  };
+
+  const scrollToSlide = (index: number) => {
+    if (!scrollContainerRef.current) return;
+    const width = scrollContainerRef.current.clientWidth;
+    scrollContainerRef.current.scrollTo({
+      left: index * width,
+      behavior: "smooth",
+    });
+    setActiveSlide(index);
+  };
+
   return (
     <div className="subpage">
       <div className="subpage-content">
@@ -47,69 +69,160 @@ export default function ProjectsPage() {
           <span>Real-world solutions built by student developers at CSMU</span>
         </h1>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* DESKTOP VIEW: Grid with 3D TiltCards */}
+        <div className="hidden md:grid mt-16 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
-            <div
-              key={project.title}
-              className="modern-card p-8 flex flex-col justify-between space-y-6 group hover:border-[#4285F4] transition-all"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[rgba(66,133,244,0.12)] text-[#8db1ff]">
-                    {project.category}
-                  </span>
-                  <span className="font-mono text-xs text-[var(--muted)]">
-                    {project.status}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
-                  {project.title}
-                </h3>
-
-                <p className="text-sm text-[var(--muted-bright)] leading-relaxed">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {project.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="px-2.5 py-0.5 rounded-md font-mono text-[11px] bg-[var(--surface-highlight)] text-[var(--muted-bright)]"
-                    >
-                      {t}
+            <TiltCard key={project.title} maxTilt={9} scale={1.03} glare={true} className="h-full">
+              <div className="modern-card p-8 flex flex-col justify-between space-y-6 group hover:border-[#4285F4] transition-all h-full">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[rgba(66,133,244,0.12)] text-[#8db1ff]">
+                      {project.category}
                     </span>
-                  ))}
+                    <span className="font-mono text-xs text-[var(--muted)]">
+                      {project.status}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-[var(--white)] group-hover:text-[#8db1ff] transition-colors">
+                    {project.title}
+                  </h3>
+
+                  <p className="text-sm text-[var(--muted-bright)] leading-relaxed">
+                    {project.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {project.tags.map((t) => (
+                      <span
+                        key={t}
+                        className="px-2.5 py-0.5 rounded-md font-mono text-[11px] bg-[var(--surface-highlight)] text-[var(--muted-bright)]"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-[var(--line)]">
+                  <Link
+                    href={project.link}
+                    className="text-xs font-semibold text-[#8db1ff] hover:underline flex items-center justify-between"
+                  >
+                    <span>Explore Project</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
-
-              <div className="pt-4 border-t border-[var(--line)]">
-                <Link
-                  href={project.link}
-                  className="text-xs font-semibold text-[#8db1ff] hover:underline flex items-center justify-between"
-                >
-                  <span>Explore Project</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
+            </TiltCard>
           ))}
         </div>
 
-        {/* Submit project CTA */}
-        <section className="mt-20 modern-card p-10 text-center space-y-4 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-3xl">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-[rgba(52,168,83,0.1)] text-[#34A853] flex items-center justify-center">
-            <FolderGit2 className="w-6 h-6" />
+        {/* MOBILE VIEW (RULE 1 #12): Swipeable Snap Carousel */}
+        <div className="block md:hidden mt-12 space-y-6">
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-4"
+            style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+          >
+            {projects.map((project, i) => (
+              <div
+                key={project.title}
+                className="w-full flex-none snap-center"
+              >
+                <div className="modern-card p-6 flex flex-col justify-between space-y-5 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-2xl min-h-[340px]">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold bg-[rgba(66,133,244,0.12)] text-[#8db1ff]">
+                        {project.category}
+                      </span>
+                      <span className="font-mono text-xs text-[var(--muted)]">
+                        0{i + 1} / 0{projects.length}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[var(--white)]">
+                      {project.title}
+                    </h3>
+
+                    <p className="text-xs text-[var(--muted-bright)] leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-2">
+                      {project.tags.map((t) => (
+                        <span
+                          key={t}
+                          className="px-2 py-0.5 rounded font-mono text-[10px] bg-[var(--surface-highlight)] text-[var(--muted-bright)]"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-[var(--line)]">
+                    <Link
+                      href={project.link}
+                      className="text-xs font-semibold text-[#8db1ff] flex items-center justify-between py-1"
+                    >
+                      <span>Explore Project</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--white)]">
-            Building something with Google technologies?
+
+          {/* Carousel controls: Dots + Arrows */}
+          <div className="flex items-center justify-between px-2 pt-2">
+            <div className="flex items-center gap-2">
+              {projects.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => scrollToSlide(idx)}
+                  aria-label={`Go to slide ${idx + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    activeSlide === idx ? "w-6 bg-[#4285F4]" : "w-2 bg-[var(--line)]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => scrollToSlide(Math.max(0, activeSlide - 1))}
+                disabled={activeSlide === 0}
+                aria-label="Previous project"
+                className="p-2 rounded-full border border-[var(--line)] bg-[var(--surface)] text-[var(--white)] disabled:opacity-30 disabled:pointer-events-none"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => scrollToSlide(Math.min(projects.length - 1, activeSlide + 1))}
+                disabled={activeSlide === projects.length - 1}
+                aria-label="Next project"
+                className="p-2 rounded-full border border-[var(--line)] bg-[var(--surface)] text-[var(--white)] disabled:opacity-30 disabled:pointer-events-none"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit project CTA */}
+        <section className="mt-20 modern-card p-8 md:p-10 text-center space-y-4 border border-[var(--card-border)] bg-[var(--surface-card)] rounded-3xl">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--white)]">
+            Have a project to showcase?
           </h2>
-          <p className="text-[var(--muted-bright)] text-sm max-w-lg mx-auto">
-            Share your projects with the CSMU community, receive feedback from mentors, and showcase your work.
+          <p className="text-[var(--muted-bright)] max-w-xl mx-auto text-sm leading-relaxed">
+            We love highlighting projects built by CSMU developers. Reach out to the technical team to get your project featured.
           </p>
           <div className="pt-2">
-            <Link href="/community" className="button button-primary">
-              <span>Submit a Project</span>
+            <Link href="/contact" className="button button-primary">
+              <span>Submit Your Project</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

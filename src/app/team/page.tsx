@@ -113,17 +113,24 @@ export default function TeamPage() {
     }
   }, []);
 
+  const [activeMobilePhoto, setActiveMobilePhoto] = useState<string | null>(null);
+
   const renderMemberCard = (member: TeamMember, highlight = false) => {
     const initials = getInitials(member.name);
 
     return (
       <TiltCard key={member.name} maxTilt={9} scale={1.02} glare={true} className="h-full">
         <div
+          onClick={() => {
+            if (member.photo) {
+              setActiveMobilePhoto((prev) => (prev === member.photo ? null : member.photo || null));
+            }
+          }}
           onMouseEnter={() => {
             if (member.photo) setHoveredPhoto(member.photo);
           }}
           onMouseLeave={() => setHoveredPhoto(null)}
-          className={`modern-card p-6 flex flex-col justify-between group transition-all h-full ${
+          className={`modern-card p-6 flex flex-col justify-between group transition-all h-full cursor-pointer ${
             highlight ? "border-[#4285F4]/40 bg-[rgba(66,133,244,0.02)]" : ""
           }`}
         >
@@ -230,6 +237,23 @@ export default function TeamPage() {
           />
         )}
       </div>
+
+      {/* Mobile Modal Photo Preview (tap a team photo = centred preview, tap again to close) */}
+      {activeMobilePhoto && (
+        <div
+          onClick={() => setActiveMobilePhoto(null)}
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 md:hidden animate-fade-in"
+        >
+          <div className="relative w-72 h-72 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl">
+            <Image
+              src={activeMobilePhoto}
+              alt="Team member preview"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+      )}
 
       <div className="subpage-content">
         <span className="section-index font-mono text-xs uppercase tracking-wider text-[var(--muted)]">

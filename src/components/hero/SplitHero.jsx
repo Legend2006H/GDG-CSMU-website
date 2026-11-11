@@ -55,9 +55,9 @@ export function SplitHero() {
 
     const mm = gsap.matchMedia();
 
-    // Only animate on fine pointer, desktop width, and when prefers-reduced-motion is no-preference
+    // Animate on both desktop and mobile as long as prefers-reduced-motion is no-preference
     mm.add(
-      "(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+      "(prefers-reduced-motion: no-preference)",
       () => {
         setIsAnimated(true);
 
