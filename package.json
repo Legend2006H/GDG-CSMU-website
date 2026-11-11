@@ -1,30 +1,18 @@
 {
-  "name": "ai-website-clone-template",
-  "version": "0.6.1",
+  "name": "gdg-csmu-website",
+  "version": "1.0.0",
   "private": true,
-  "description": "Clone any website into a clean, modern Next.js codebase using AI coding agents",
-  "author": "JCodesMore",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/JCodesMore/ai-website-cloner-template.git"
-  },
-  "homepage": "https://github.com/JCodesMore/ai-website-cloner-template",
-  "bugs": {
-    "url": "https://github.com/JCodesMore/ai-website-cloner-template/issues"
-  },
+  "description": "Official website for Google Developer Groups on Campus at Chhatrapati Shivaji Maharaj University (GDG CSMU)",
   "keywords": [
-    "claude-code",
-    "website-clone",
-    "reverse-engineering",
+    "gdg",
+    "gdg-on-campus",
+    "csmu",
     "nextjs",
-    "ai",
-    "template",
     "tailwindcss",
-    "shadcn-ui"
+    "developer-community"
   ],
   "engines": {
-    "node": ">=24"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "next dev",

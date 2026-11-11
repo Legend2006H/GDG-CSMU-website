@@ -8,17 +8,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Website Reverse-Engineer Template
-
-## What This Is
-A reusable template for reverse-engineering any website into a clean, modern Next.js codebase using AI coding agents. The Next.js + shadcn/ui + Tailwind v4 base is pre-scaffolded — just run `/clone-website <url1> [<url2> ...]`.
+# GDG on Campus CSMU — Website Codebase
 
 ## Tech Stack
 - **Framework:** Next.js 16 (App Router, React 19, TypeScript strict)
-- **UI:** shadcn/ui (Base UI primitives, Tailwind CSS v4, `cn()` utility)
-- **Icons:** Lucide React (default — will be replaced/supplemented by extracted SVGs)
-- **Styling:** Tailwind CSS v4 with oklch design tokens
-- **Deployment:** Vercel
+- **Styling:** Tailwind CSS v4, custom theme variables (dark & light)
+- **Animations:** GSAP ScrollTrigger & HTML5 2D Canvas
+- **Icons:** Lucide React
 
 ## Commands
 - `npm run dev` — Start dev server
@@ -30,41 +26,22 @@ A reusable template for reverse-engineering any website into a clean, modern Nex
 ## Code Style
 - TypeScript strict mode, no `any`
 - Named exports, PascalCase components, camelCase utils
-- Tailwind utilities or scoped CSS; avoid inline styles unless behavior needs dynamic values
 - 2-space indentation
 - Responsive: mobile-first
-
-## Design Principles
-- **Pixel-perfect emulation** — match the target's spacing, colors, typography exactly
-- **No personal aesthetic changes during emulation phase** — match 1:1 first, customize later
-- **Real content** — use actual text and assets from the target site, not placeholders
-- **Beauty-first** — every pixel matters
 
 ## Project Structure
 ```
 src/
-  app/              # Next.js routes
-  components/       # React components
-    ui/             # shadcn/ui primitives
-    sites/<site>/   # Source-specific components, including extracted SVGs
-  lib/
-    utils.ts        # cn() utility (shadcn)
+  app/              # Next.js routes (/about, /events, /team, /technologies, /community, /contact, /projects)
+  components/
+    gdg/            # Global components (navbar, footer, theme provider)
+    hero/           # Animated hero (DotGrid, DottedChevron, SplitHero, heroConfig)
+    ui/             # Base UI primitives
+  data/             # JSON data files (events.json, team.json)
+  hooks/            # Custom hooks (usePrefersReducedMotion, useCoarsePointer)
+  lib/              # Utilities (utils.ts)
   types/            # TypeScript interfaces
-  hooks/            # Custom React hooks
 public/
-  sites/<site>/     # Source-specific images, fonts, video, and other assets
-docs/
-  research/<site>/  # Page brief, asset map, and inspection evidence
-  design-references/ # Screenshots and visual references
-scripts/            # Asset download scripts
-.agents/
-  skills/
-    clone-website/  # Canonical cross-agent cloning workflow
-.claude/
-  commands/
-    clone-website.md # Thin Claude Code invocation bridge
+  fonts/            # Local typography
+  images/           # Chapter logo, team photos, event posters
 ```
-
-## Agent Workflow
-- Edit `.agents/skills/clone-website/` for cloning-workflow changes. It is the canonical skill used by Codex, Cursor, and OpenCode.
-- Keep `.claude/commands/clone-website.md` as a thin Claude Code bridge to the canonical skill; do not duplicate the workflow there.

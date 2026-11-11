@@ -2,23 +2,16 @@
 
 @font-face {
   font-family: "Google Sans Flex Local";
-  src: url("/sites/gdgoc-yonsei/font-display.woff2") format("woff2");
+  src: url("/fonts/font-display.woff2") format("woff2");
   font-style: normal;
   font-weight: 100 1000;
   font-display: swap;
 }
 @font-face {
   font-family: "Google Sans Local";
-  src: url("/sites/gdgoc-yonsei/font-body.woff2") format("woff2");
+  src: url("/fonts/font-body.woff2") format("woff2");
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Yonsei Code";
-  src: url("/sites/gdgoc-yonsei/font-korean.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 100 900;
   font-display: swap;
 }
 
