@@ -192,14 +192,18 @@ export default function EventsPage() {
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-black">
-                <Image
-                  src={selectedEvent.image}
-                  alt={selectedEvent.title}
-                  fill
-                  className="object-contain"
-                />
-              </div>
+              <TiltCard maxTilt={8} scale={1.02} glare={true} className="rounded-2xl">
+                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-black/90 border border-white/20 shadow-lg">
+                  <Image
+                    src={selectedEvent.image}
+                    alt={selectedEvent.title}
+                    fill
+                    className="object-contain"
+                  />
+                  {/* Glass sheen */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/15 pointer-events-none" />
+                </div>
+              </TiltCard>
 
               <div className="space-y-3">
                 <div className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[var(--surface-highlight)] text-[var(--muted-bright)]">

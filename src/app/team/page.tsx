@@ -238,19 +238,39 @@ export default function TeamPage() {
         )}
       </div>
 
-      {/* Mobile Modal Photo Preview (tap a team photo = centred preview, tap again to close) */}
+      {/* Mobile Modal Photo Preview (tap a team photo = centred 3D glass preview, tap again to close) */}
       {activeMobilePhoto && (
         <div
           onClick={() => setActiveMobilePhoto(null)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 md:hidden animate-fade-in"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-6 md:hidden animate-fade-in"
         >
-          <div className="relative w-72 h-72 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl">
-            <Image
-              src={activeMobilePhoto}
-              alt="Team member preview"
-              fill
-              className="object-cover"
-            />
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-xs flex flex-col items-center">
+            <TiltCard maxTilt={14} scale={1.04} glare={true} className="w-full aspect-square">
+              <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/30 bg-white/10 dark:bg-black/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] p-2.5">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/50">
+                  <Image
+                    src={activeMobilePhoto}
+                    alt="Team member preview"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                  {/* Glass reflective diagonal sheen */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/25 pointer-events-none" />
+                </div>
+                {/* Close button */}
+                <button
+                  onClick={() => setActiveMobilePhoto(null)}
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/70 border border-white/30 backdrop-blur-md flex items-center justify-center text-white active:scale-95 transition-transform"
+                  aria-label="Close preview"
+                >
+                  ✕
+                </button>
+              </div>
+            </TiltCard>
+            <p className="text-center font-mono text-[11px] text-white/70 mt-3 select-none">
+              Touch to tilt in 3D · Tap outside to close
+            </p>
           </div>
         </div>
       )}
