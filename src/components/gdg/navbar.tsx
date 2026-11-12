@@ -100,6 +100,9 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+                }}
                 className={`relative transition-colors duration-200 text-xs tracking-wider px-1.5 py-1 ${
                   isActive
                     ? "text-[#4285F4] font-bold"
@@ -169,7 +172,10 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+                }}
                 className="py-4 border-b border-[var(--line)] text-[var(--white)] flex items-center justify-between text-2xl font-semibold tracking-tight hover:text-[#4285F4] transition-colors"
                 style={{ "--item-index": i } as React.CSSProperties}
               >

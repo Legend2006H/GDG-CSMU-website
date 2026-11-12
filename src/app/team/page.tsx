@@ -2,11 +2,11 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import teamData from "@/data/team.json";
 import { TeamMember, TeamData } from "@/types/gdg";
 import { Mail } from "lucide-react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TiltCard } from "@/components/animation/TiltCard";
 
 function LinkedInIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -38,6 +38,7 @@ function getInitials(name: string) {
 }
 
 export default function TeamPage() {
+  const pathname = usePathname();
   const typedData = teamData as unknown as TeamData;
   const { current, past } = typedData;
 
@@ -47,71 +48,113 @@ export default function TeamPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    // Immediately reset scroll to top on navigation so new tab content begins at top
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // 9. Photo reveals: clip-path inset(100% 0 0 0) -> inset(0), inner image scale 1.3 -> 1, expo.out 1.0s
     const containers = document.querySelectorAll<HTMLElement>(".team-photo-container");
-    containers.forEach((container) => {
-      const img = container.querySelector("img");
-      if (prefersReducedMotion) {
-        gsap.set(container, { clipPath: "inset(0% 0 0 0)" });
-        if (img) gsap.set(img, { scale: 1 });
-        return;
-      }
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top 88%",
-          toggleActions: "play none none none",
-        },
+    if (prefersReducedMotion) {
+      containers.forEach((container) => {
+        container.style.clipPath = "inset(0% 0 0 0)";
+        const img = container.querySelector("img");
+        if (img) img.style.transform = "scale(1)";
       });
+      return;
+    }
 
-      tl.fromTo(
+    const animatedSet = new Set<HTMLElement>();
+
+    const revealContainer = (container: HTMLElement) => {
+      if (animatedSet.has(container)) return;
+      animatedSet.add(container);
+
+      const img = container.querySelector("img");
+      gsap.fromTo(
         container,
-        { clipPath: "inset(100% 0 0 0)" },
+        { clipPath: "inset(100% 0 0 0)", opacity: 0.6 },
         {
           clipPath: "inset(0% 0 0 0)",
-          duration: 1.0,
-          ease: "expo.out",
-        },
-        0
+          opacity: 1,
+          duration: 0.85,
+          ease: "power2.out",
+          overwrite: "auto",
+        }
       );
 
       if (img) {
-        tl.fromTo(
+        gsap.fromTo(
           img,
-          { scale: 1.3 },
+          { scale: 1.22 },
           {
             scale: 1,
-            duration: 1.0,
-            ease: "expo.out",
-          },
-          0
+            duration: 0.85,
+            ease: "power2.out",
+            overwrite: "auto",
+          }
         );
       }
+    };
+
+    // Reliable IntersectionObserver with generous rootMargin:
+    // Triggers reveal as soon as any corner enters viewport, guaranteed on every tab navigation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            revealContainer(entry.target as HTMLElement);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "100px 0px 100px 0px",
+        threshold: 0,
+      }
+    );
+
+    containers.forEach((container) => {
+      observer.observe(container);
     });
+
+    // Safety fallback: reveal any remaining containers after a short delay
+    // so images are guaranteed to be 100% visible even under rapid scroll or fast tab switching
+    const fallbackTimer = setTimeout(() => {
+      containers.forEach((container) => {
+        revealContainer(container);
+      });
+    }, 1200);
 
     // Desktop only floating cursor photo trail
     const isDesktop = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
+    let handleMove: ((e: MouseEvent) => void) | null = null;
     if (isDesktop && !prefersReducedMotion && floatingImgRef.current) {
       const floatEl = floatingImgRef.current;
       const xTo = gsap.quickTo(floatEl, "x", { duration: 0.35, ease: "power3.out" });
       const yTo = gsap.quickTo(floatEl, "y", { duration: 0.35, ease: "power3.out" });
 
-      const handleMove = (e: MouseEvent) => {
+      handleMove = (e: MouseEvent) => {
         xTo(e.clientX + 20);
         yTo(e.clientY + 20);
       };
 
       window.addEventListener("mousemove", handleMove);
-      return () => {
-        window.removeEventListener("mousemove", handleMove);
-      };
     }
-  }, []);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      observer.disconnect();
+      if (handleMove) {
+        window.removeEventListener("mousemove", handleMove);
+      }
+      containers.forEach((container) => {
+        gsap.killTweensOf(container);
+        const img = container.querySelector("img");
+        if (img) gsap.killTweensOf(img);
+      });
+    };
+  }, [pathname]);
 
   const [activeMobilePhoto, setActiveMobilePhoto] = useState<string | null>(null);
 

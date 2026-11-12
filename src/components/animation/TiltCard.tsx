@@ -2,7 +2,6 @@
 
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -35,23 +34,25 @@ export function TiltCard({
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    const st = ScrollTrigger.create({
-      trigger: card,
-      start: "top 88%",
-      once: true,
-      onEnter: () => {
-        gsap.fromTo(
-          card,
-          { y: 16, opacity: 0.8 },
-          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", overwrite: "auto" }
-        );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.fromTo(
+            card,
+            { y: 16, opacity: 0.8 },
+            { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", overwrite: "auto" }
+          );
+          observer.unobserve(card);
+        }
       },
-    });
+      { threshold: 0.05 }
+    );
+
+    observer.observe(card);
 
     return () => {
-      st.kill();
+      observer.disconnect();
+      gsap.killTweensOf(card);
     };
   }, []);
 
