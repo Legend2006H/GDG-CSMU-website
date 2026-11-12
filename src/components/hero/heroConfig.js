@@ -27,10 +27,10 @@ export const RIGHT_CHEVRON_TOP = "#34A853";   // Green
 export const RIGHT_CHEVRON_BOTTOM = "#FBBC04";// Yellow
 
 // Effect 3: Scroll-to-Open Split
-export const HERO_SCROLL_HEIGHT = "160vh";  // outer wrapper scroll room (shortened to eliminate dead space)
-export const SCRUB = 1;                     // GSAP scrub smoothing in seconds
+export const HERO_SCROLL_HEIGHT = "130vh";  // Fast, responsive scroll runway
+export const SCRUB = 0.3;                   // Snappy GSAP scrub smoothing (reduced lag)
 export const TITLE_TRAVEL = 120;            // xPercent magnitude for title halves
-export const CHEVRON_TRAVEL = 180;          // xPercent magnitude for chevrons
+export const CHEVRON_TRAVEL = 200;          // xPercent magnitude for chevrons
 export const META_FADE_END = 0.35;          // meta group fully faded by 35% of scroll
 export const HERO_SCALE_TO = 0.96;          // inner hero scale down over scroll
 

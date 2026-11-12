@@ -104,15 +104,15 @@ export function SplitHero() {
           );
         }
 
-        // 2. Chevrons travel further (±180%) and start at position 0
+        // 2. Chevrons travel outward fast (immediate response on scroll)
         if (leftChevronRef.current) {
           tl.to(
             leftChevronRef.current,
             {
               xPercent: -CHEVRON_TRAVEL,
               opacity: 0,
-              duration: 1,
-              ease: "power2.inOut",
+              duration: 0.65,
+              ease: "power2.out",
             },
             0
           );
@@ -124,22 +124,22 @@ export function SplitHero() {
             {
               xPercent: CHEVRON_TRAVEL,
               opacity: 0,
-              duration: 1,
-              ease: "power2.inOut",
+              duration: 0.65,
+              ease: "power2.out",
             },
             0
           );
         }
 
-        // 3. Title halves split (±120%)
+        // 3. Title halves split fast (0 -> 0.75, power2.out)
         if (leftRef.current) {
           tl.to(
             leftRef.current,
             {
               xPercent: -TITLE_TRAVEL,
               opacity: 0,
-              duration: 1,
-              ease: "power2.inOut",
+              duration: 0.75,
+              ease: "power2.out",
             },
             0
           );
@@ -151,8 +151,8 @@ export function SplitHero() {
             {
               xPercent: TITLE_TRAVEL,
               opacity: 0,
-              duration: 1,
-              ease: "power2.inOut",
+              duration: 0.75,
+              ease: "power2.out",
             },
             0
           );
@@ -212,7 +212,7 @@ export function SplitHero() {
             trigger: hero,
             start: "top top",
             end: "bottom top",
-            scrub: 0.8,
+            scrub: 0.3,
             invalidateOnRefresh: true,
           },
         });
@@ -226,34 +226,34 @@ export function SplitHero() {
           );
         }
 
-        // 2. Chevrons travel outward
+        // 2. Chevrons travel outward fast
         if (mobileLeftChevronRef.current) {
           tl.to(
             mobileLeftChevronRef.current,
-            { xPercent: -150, opacity: 0, duration: 1, ease: "power2.inOut" },
+            { xPercent: -180, opacity: 0, duration: 0.65, ease: "power2.out" },
             0
           );
         }
         if (mobileRightChevronRef.current) {
           tl.to(
             mobileRightChevronRef.current,
-            { xPercent: 150, opacity: 0, duration: 1, ease: "power2.inOut" },
+            { xPercent: 180, opacity: 0, duration: 0.65, ease: "power2.out" },
             0
           );
         }
 
-        // 3. Title halves split outward
+        // 3. Title halves split outward fast
         if (mobileLeftRef.current) {
           tl.to(
             mobileLeftRef.current,
-            { xPercent: -100, opacity: 0, duration: 1, ease: "power2.inOut" },
+            { xPercent: -100, opacity: 0, duration: 0.75, ease: "power2.out" },
             0
           );
         }
         if (mobileRightRef.current) {
           tl.to(
             mobileRightRef.current,
-            { xPercent: 100, opacity: 0, duration: 1, ease: "power2.inOut" },
+            { xPercent: 100, opacity: 0, duration: 0.75, ease: "power2.out" },
             0
           );
         }
@@ -292,7 +292,7 @@ export function SplitHero() {
   return (
     <section
       ref={heroRef}
-      className="relative w-full bg-[var(--bg)] h-[135svh] md:h-auto min-h-[100svh]"
+      className="relative w-full bg-[var(--bg)] h-[120svh] md:h-auto min-h-[100svh]"
       style={{ height: isAnimated ? HERO_SCROLL_HEIGHT : undefined }}
     >
       {/* Background Dot-Grid with Mouse & Touch Glow — sticky viewport container prevents canvas stretching and keeps glow 1:1 synced to cursor */}
