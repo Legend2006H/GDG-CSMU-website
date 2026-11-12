@@ -57,59 +57,55 @@ export default function TeamPage() {
     if (prefersReducedMotion) {
       containers.forEach((container) => {
         container.style.clipPath = "inset(0% 0 0 0)";
+        container.style.opacity = "1";
         const img = container.querySelector("img");
         if (img) img.style.transform = "scale(1)";
       });
       return;
     }
 
-    const animatedSet = new Set<HTMLElement>();
+    const initialChecked = new Set<HTMLElement>();
 
-    const revealContainer = (container: HTMLElement) => {
-      if (animatedSet.has(container)) return;
-      animatedSet.add(container);
-
-      const img = container.querySelector("img");
-      gsap.fromTo(
-        container,
-        { clipPath: "inset(100% 0 0 0)", opacity: 0.6 },
-        {
-          clipPath: "inset(0% 0 0 0)",
-          opacity: 1,
-          duration: 0.85,
-          ease: "power2.out",
-          overwrite: "auto",
-        }
-      );
-
-      if (img) {
-        gsap.fromTo(
-          img,
-          { scale: 1.22 },
-          {
-            scale: 1,
-            duration: 0.85,
-            ease: "power2.out",
-            overwrite: "auto",
-          }
-        );
-      }
-    };
-
-    // Reliable IntersectionObserver with generous rootMargin:
-    // Triggers reveal as soon as any corner enters viewport, guaranteed on every tab navigation
+    // Observer triggers each image SEPARATELY when it scrolls into view
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const container = entry.target as HTMLElement;
+          const img = container.querySelector("img");
+
           if (entry.isIntersecting) {
-            revealContainer(entry.target as HTMLElement);
-            observer.unobserve(entry.target);
+            // Reveal this specific image when it scrolls into view
+            gsap.to(container, {
+              clipPath: "inset(0% 0 0 0)",
+              opacity: 1,
+              duration: 0.85,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+
+            if (img) {
+              gsap.to(img, {
+                scale: 1,
+                duration: 0.85,
+                ease: "power2.out",
+                overwrite: "auto",
+              });
+            }
+
+            observer.unobserve(container);
+          } else {
+            // For elements that start below the viewport, set initial clipped & zoomed state
+            if (!initialChecked.has(container)) {
+              initialChecked.add(container);
+              gsap.set(container, { clipPath: "inset(100% 0 0 0)", opacity: 0.4 });
+              if (img) gsap.set(img, { scale: 1.25 });
+            }
           }
         });
       },
       {
         root: null,
-        rootMargin: "100px 0px 100px 0px",
+        rootMargin: "0px 0px -20px 0px",
         threshold: 0,
       }
     );
@@ -117,14 +113,6 @@ export default function TeamPage() {
     containers.forEach((container) => {
       observer.observe(container);
     });
-
-    // Safety fallback: reveal any remaining containers after a short delay
-    // so images are guaranteed to be 100% visible even under rapid scroll or fast tab switching
-    const fallbackTimer = setTimeout(() => {
-      containers.forEach((container) => {
-        revealContainer(container);
-      });
-    }, 1200);
 
     // Desktop only floating cursor photo trail
     const isDesktop = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
@@ -143,7 +131,6 @@ export default function TeamPage() {
     }
 
     return () => {
-      clearTimeout(fallbackTimer);
       observer.disconnect();
       if (handleMove) {
         window.removeEventListener("mousemove", handleMove);

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Calendar } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -369,75 +369,71 @@ export function SplitHero() {
             </span>
           </h1>
 
-          {/* Subtext + Buttons + Stats (meta group) */}
+          {/* Subtext + Buttons + Stats + Scroll Hint (meta group matching benchmark) */}
           <div
             ref={metaRef}
-            className="flex flex-col items-center space-y-6 sm:space-y-8 mt-6 sm:mt-8 max-w-2xl will-change-transform"
+            className="flex flex-col items-center space-y-6 sm:space-y-7 mt-6 sm:mt-7 max-w-2xl will-change-transform"
           >
-            <p className="text-sm sm:text-base md:text-lg text-[var(--muted-bright)] leading-relaxed px-4">
-              Join the official Google Developers Group at CSMU. A community of
-              passionate developers building the future together.
+            <p className="text-sm sm:text-base text-[var(--muted-bright)] font-normal leading-relaxed px-4 max-w-xl">
+              CSMU&apos;s student developer community. We connect, learn, and
+              grow, then ship what we build.
             </p>
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Magnetic strength={0.3} maxPull={8} padding={16}>
                 <Link
-                  href="/community"
-                  className="button button-primary px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-lg hover:shadow-[#4285F4]/20 transition-all"
+                  href="/events"
+                  className="px-6 py-2.5 rounded-full bg-white text-black text-xs sm:text-sm font-semibold inline-flex items-center gap-2 hover:bg-zinc-100 active:scale-95 transition-all shadow-md"
                 >
-                  <span>Join Community</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="text-black font-semibold">See sessions</span>
+                  <ArrowRight className="w-4 h-4 text-black stroke-[2.2]" />
                 </Link>
               </Magnetic>
               <Link
-                href="/events"
-                className="button px-6 py-3 rounded-full text-xs sm:text-sm font-semibold inline-flex items-center gap-2 border border-[rgba(255,255,255,0.2)] hover:border-[#4285F4] hover:bg-[rgba(66,133,244,0.08)] transition-all text-white bg-[rgba(255,255,255,0.04)]"
+                href="/projects"
+                className="px-6 py-2.5 rounded-full bg-white/[0.04] border border-white/20 hover:border-white/40 hover:bg-white/[0.08] active:scale-95 text-white text-xs sm:text-sm font-medium inline-flex items-center transition-all"
               >
-                <Calendar className="w-4 h-4 text-[#EA4335]" />
-                <span>Upcoming Events</span>
+                <span>See projects</span>
               </Link>
             </div>
 
-            {/* Bottom Stats Strip (Canonical Numbers) */}
-            <div className="pt-2 sm:pt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-xs sm:text-sm text-[var(--muted-bright)]">
-              <span className="flex items-center gap-2">
-                <i className="inline-block w-2 h-2 rounded-full bg-[#4285F4]" />
-                750+ members
+            {/* Bottom Stats Strip (Canonical Numbers with Google colors: Blue, Green, Red, Yellow - no duplicate bullets) */}
+            <div className="pt-2 sm:pt-3 flex flex-wrap items-center justify-center gap-6 sm:gap-8 font-mono text-xs sm:text-[13px] text-zinc-400">
+              <span className="inline-flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4]" />
+                <span>750+ members</span>
               </span>
-              <span className="text-[var(--line)] hidden sm:inline">•</span>
-              <span className="flex items-center gap-2">
-                <i className="inline-block w-2 h-2 rounded-full bg-[#EA4335]" />
-                15+ events
+              <span className="inline-flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#34A853]" />
+                <span>15+ events</span>
               </span>
-              <span className="text-[var(--line)] hidden sm:inline">•</span>
-              <span className="flex items-center gap-2">
-                <i className="inline-block w-2 h-2 rounded-full bg-[#FBBC04]" />
-                30+ speakers
+              <span className="inline-flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#EA4335]" />
+                <span>30+ speakers</span>
               </span>
-              <span className="text-[var(--line)] hidden sm:inline">•</span>
-              <span className="flex items-center gap-2">
-                <i className="inline-block w-2 h-2 rounded-full bg-[#34A853]" />
-                6 tech tracks
+              <span className="inline-flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FBBC04]" />
+                <span>6 tech tracks</span>
               </span>
             </div>
+
+            {/* Desktop scroll hint: directly below stats strip matching reference */}
+            {isAnimated && (
+              <div
+                ref={hintRef}
+                className="pt-2 flex flex-col items-center justify-center select-none pointer-events-none will-change-transform"
+              >
+                <span className="font-mono text-[10px] sm:text-[11px] text-[var(--muted)] tracking-[0.25em] uppercase">
+                  SCROLL TO OPEN
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Desktop scroll hint: only rendered when animation is active */}
-        {isAnimated ? (
-          <div
-            ref={hintRef}
-            className="relative z-10 pb-2 sm:pb-4 flex flex-col items-center gap-1 select-none pointer-events-none flex-none"
-          >
-            <span className="font-mono text-[10px] sm:text-[11px] text-[var(--muted)] tracking-[0.25em] uppercase">
-              SCROLL TO OPEN
-            </span>
-            <ChevronDown className="w-4 h-4 text-[var(--muted)] animate-bounce" />
-          </div>
-        ) : (
-          <div className="w-full h-8 flex-none" />
-        )}
+        {/* Bottom breathing space */}
+        <div className="w-full h-8 sm:h-12 flex-none" />
       </div>
 
       {/* =========================================================================
@@ -505,26 +501,26 @@ export function SplitHero() {
             CSMU&apos;s student developer community. We connect, learn, and grow, then ship what we build.
           </p>
 
-          {/* 4. Stacked CTAs */}
+          {/* 4. Stacked CTAs matching mobile benchmark */}
           <div className="w-full max-w-[320px] flex flex-col gap-2.5 flex-none mx-auto">
             <Link
-              href="/community"
+              href="/events"
               style={{ backgroundColor: "#ffffff", color: "#000000" }}
               className="w-full h-12 rounded-full !bg-white !text-black font-semibold text-sm flex items-center justify-center gap-2 hover:!bg-zinc-100 active:scale-95 transition-all shadow-md"
             >
-              <span className="!text-black font-semibold">Join Community</span>
+              <span className="!text-black font-semibold">See sessions</span>
               <ArrowRight className="w-4 h-4 !text-black stroke-[2.2]" />
             </Link>
             <Link
-              href="/events"
+              href="/projects"
               className="w-full h-12 rounded-full bg-[var(--surface-highlight)] border border-[var(--line)] text-[var(--white)] font-medium text-sm flex items-center justify-center hover:border-zinc-500 active:scale-95 transition-all"
             >
-              <span>Upcoming Events</span>
+              <span>See projects</span>
             </Link>
           </div>
         </div>
 
-        {/* 5. Bottom Meta & Scroll Cue */}
+        {/* 5. Bottom Meta & Scroll Cue matching benchmark */}
         <div className="w-full flex flex-col items-center gap-2 text-center flex-none">
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] text-[var(--muted)]">
             <span className="inline-flex items-center gap-1.5">
@@ -532,11 +528,11 @@ export function SplitHero() {
               <span>750+ members</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#EA4335]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#34A853]" />
               <span>15+ events</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#34A853]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#EA4335]" />
               <span>30+ speakers</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
