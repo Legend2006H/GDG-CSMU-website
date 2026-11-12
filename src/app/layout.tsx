@@ -8,6 +8,7 @@ import { Preloader } from "@/components/animation/Preloader";
 import { ViewTransitionHandler } from "@/components/animation/ViewTransitionHandler";
 import { TouchFollower } from "@/components/animation/TouchFollower";
 import { CustomCursor } from "@/components/animation/CustomCursor";
+import { GlobalMagnetic } from "@/components/animation/GlobalMagnetic";
 
 export const metadata: Metadata = {
   title: "GDG CSMU | Google Developer Group on Campus CSMU",
@@ -38,6 +39,7 @@ export default function RootLayout({
             <Preloader />
             <TouchFollower />
             <CustomCursor />
+            <GlobalMagnetic />
             <ViewTransitionHandler />
             <Navbar />
             <main id="main-content" className="flex-1 w-full">{children}</main>

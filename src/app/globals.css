@@ -70,6 +70,16 @@ section[id], div[id] {
   display: block !important;
 }
 
+/* Ambient chevron halftone dots for 3D raster effect */
+.chevron-ambient-dot {
+  fill: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="light"] .chevron-ambient-dot,
+:root.light .chevron-ambient-dot {
+  fill: rgba(0, 0, 0, 0.12);
+}
+
 /* Custom Cursor Styling */
 html.has-custom-cursor,
 html.has-custom-cursor body,
@@ -469,12 +479,12 @@ main {
   font-weight: 700;
   background: var(--surface-card);
   color: var(--white);
-  transition: transform 0.2s, background 0.2s, border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  will-change: transform;
 }
 
 .button:hover {
-  transform: translateY(-2px);
   background: var(--surface-highlight);
   border-color: var(--white);
 }

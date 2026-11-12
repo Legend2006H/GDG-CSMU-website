@@ -33,16 +33,7 @@ export function Magnetic({
     const isDesktop = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
 
     if (isDesktop) {
-      // DESKTOP: Smooth magnetic cursor pull
-      const xTo = gsap.quickTo(target, "x", {
-        duration: MOTION_TOKENS.durationUi,
-        ease: MOTION_TOKENS.easeUi,
-      });
-      const yTo = gsap.quickTo(target, "y", {
-        duration: MOTION_TOKENS.durationUi,
-        ease: MOTION_TOKENS.easeUi,
-      });
-
+      // DESKTOP: Smooth continuous magnetic cursor pull
       const handlePointerMove = (e: PointerEvent) => {
         const rect = container.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
@@ -55,8 +46,13 @@ export function Magnetic({
         deltaX = Math.max(-maxPull, Math.min(maxPull, deltaX));
         deltaY = Math.max(-maxPull, Math.min(maxPull, deltaY));
 
-        xTo(deltaX);
-        yTo(deltaY);
+        gsap.to(target, {
+          x: deltaX,
+          y: deltaY,
+          duration: MOTION_TOKENS.durationUi,
+          ease: MOTION_TOKENS.easeUi,
+          overwrite: "auto",
+        });
       };
 
       const handlePointerLeave = () => {
@@ -137,6 +133,7 @@ export function Magnetic({
   return (
     <div
       ref={containerRef}
+      data-magnetic-container="true"
       className={`inline-block relative min-w-[44px] min-h-[44px] flex items-center justify-center ${className}`}
       style={{ padding: `${padding}px`, margin: `-${padding}px` }}
     >

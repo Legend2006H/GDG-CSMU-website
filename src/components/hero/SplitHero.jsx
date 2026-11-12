@@ -14,7 +14,6 @@ import {
   SCRUB,
   TITLE_TRAVEL,
   CHEVRON_TRAVEL,
-  META_FADE_END,
   HERO_SCALE_TO,
 } from "./heroConfig";
 
@@ -159,28 +158,31 @@ export function SplitHero() {
           );
         }
 
-        // 4. Meta group (eyebrow + subtext + buttons + stats + hint) fades out and moves up by META_FADE_END (0.35)
-        const metaElements = [eyebrowRef.current, metaRef.current, hintRef.current].filter(Boolean);
-        if (metaElements.length > 0) {
+        // 4. Content meta group (subtext + buttons + stats): stays fully visible and interactive while scrolling,
+        // only fading at the very end of the hero timeline (0.85 -> 1.0) as the hero unpins
+        if (metaRef.current) {
           tl.to(
-            metaElements,
+            metaRef.current,
             {
               opacity: 0,
-              y: -24,
-              duration: META_FADE_END,
-              ease: "power2.out",
-              onComplete: () => {
-                metaElements.forEach((el) => {
-                  if (el) el.style.visibility = "hidden";
-                });
-              },
-              onReverseComplete: () => {
-                metaElements.forEach((el) => {
-                  if (el) el.style.visibility = "visible";
-                });
-              },
+              y: -16,
+              duration: 0.15,
+              ease: "power2.in",
             },
-            0
+            0.85
+          );
+        }
+
+        if (eyebrowRef.current) {
+          tl.to(
+            eyebrowRef.current,
+            {
+              opacity: 0,
+              y: -10,
+              duration: 0.15,
+              ease: "power2.in",
+            },
+            0.85
           );
         }
 
@@ -256,12 +258,13 @@ export function SplitHero() {
           );
         }
 
-        // 4. Content group (subtext, buttons, stats, next event) fades out and slides up
+        // 4. Content group (subtext, buttons, stats, next event): stays fully visible while scrolling,
+        // only fading at the very end of the scroll animation (0.85 -> 1.0)
         if (mobileMetaRef.current) {
           tl.to(
             mobileMetaRef.current,
-            { opacity: 0, y: -24, duration: 0.45, ease: "power2.out" },
-            0
+            { opacity: 0, y: -16, duration: 0.15, ease: "power2.in" },
+            0.85
           );
         }
 
@@ -334,19 +337,19 @@ export function SplitHero() {
 
           {/* Accessible Title: single h1 for screen readers, split decorative presentation */}
           <h1
-            className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 py-2 select-none w-full max-w-full"
+            className="flex items-center justify-center gap-4 sm:gap-6 md:gap-10 py-2 select-none w-full max-w-full"
             aria-label="< GDG CSMU >"
           >
             {/* LEFT HALF: [ < ] [ GDG ] */}
             <span
               ref={leftRef}
               aria-hidden="true"
-              className="flex items-center gap-2 sm:gap-3.5 will-change-transform"
+              className="flex items-center gap-3 sm:gap-4 md:gap-5 will-change-transform"
             >
-              <span ref={leftChevronRef} className="inline-block will-change-transform">
+              <span ref={leftChevronRef} className="inline-block will-change-transform flex-none">
                 <DottedChevron side="left" />
               </span>
-              <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--hero-title)] whitespace-nowrap">
+              <span className="font-bold tracking-tight text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-[var(--hero-title)] whitespace-nowrap leading-none">
                 GDG
               </span>
             </span>
@@ -355,12 +358,12 @@ export function SplitHero() {
             <span
               ref={rightRef}
               aria-hidden="true"
-              className="flex items-center gap-2 sm:gap-3.5 will-change-transform"
+              className="flex items-center gap-3 sm:gap-4 md:gap-5 will-change-transform"
             >
-              <span className="font-bold tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--hero-title)] whitespace-nowrap">
+              <span className="font-bold tracking-tight text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-[var(--hero-title)] whitespace-nowrap leading-none">
                 CSMU
               </span>
-              <span ref={rightChevronRef} className="inline-block will-change-transform">
+              <span ref={rightChevronRef} className="inline-block will-change-transform flex-none">
                 <DottedChevron side="right" />
               </span>
             </span>
@@ -462,9 +465,9 @@ export function SplitHero() {
             className="flex items-center gap-1.5 will-change-transform"
           >
             <span ref={mobileLeftChevronRef} className="inline-block will-change-transform">
-              <DottedChevron side="left" className="h-[clamp(44px,13vw,64px)] w-auto" />
+              <DottedChevron side="left" className="h-[clamp(58px,16vw,84px)] w-auto" />
             </span>
-            <span className="font-bold tracking-tight text-[clamp(44px,13vw,64px)] text-[var(--hero-title)] leading-none whitespace-nowrap">
+            <span className="font-bold tracking-tight text-[clamp(40px,11.5vw,58px)] text-[var(--hero-title)] leading-none whitespace-nowrap">
               GDG
             </span>
           </span>
@@ -474,11 +477,11 @@ export function SplitHero() {
             ref={mobileRightRef}
             className="flex items-center gap-1.5 will-change-transform"
           >
-            <span className="font-bold tracking-tight text-[clamp(44px,13vw,64px)] text-[var(--hero-title)] leading-none whitespace-nowrap">
+            <span className="font-bold tracking-tight text-[clamp(40px,11.5vw,58px)] text-[var(--hero-title)] leading-none whitespace-nowrap">
               CSMU
             </span>
             <span ref={mobileRightChevronRef} className="inline-block will-change-transform">
-              <DottedChevron side="right" className="h-[clamp(44px,13vw,64px)] w-auto" />
+              <DottedChevron side="right" className="h-[clamp(58px,16vw,84px)] w-auto" />
             </span>
           </span>
         </h1>
