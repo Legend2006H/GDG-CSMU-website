@@ -441,18 +441,18 @@ export function SplitHero() {
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Magnetic strength={0.3} maxPull={8} padding={16}>
                 <Link
-                  href="/events"
+                  href="/community"
                   className="px-6 py-2.5 rounded-full bg-white text-black text-xs sm:text-sm font-semibold inline-flex items-center gap-2 hover:bg-zinc-100 active:scale-95 transition-all shadow-md"
                 >
-                  <span className="text-black font-semibold">See sessions</span>
+                  <span className="text-black font-semibold">Join Community</span>
                   <ArrowRight className="w-4 h-4 text-black stroke-[2.2]" />
                 </Link>
               </Magnetic>
               <Link
-                href="/projects"
+                href="/events"
                 className="px-6 py-2.5 rounded-full bg-white/[0.04] border border-white/20 hover:border-white/40 hover:bg-white/[0.08] active:scale-95 text-white text-xs sm:text-sm font-medium inline-flex items-center transition-all"
               >
-                <span>See projects</span>
+                <span>Upcoming Events</span>
               </Link>
             </div>
 
@@ -576,18 +576,18 @@ export function SplitHero() {
           {/* 4. Stacked CTAs matching mobile benchmark */}
           <div className="w-full max-w-[320px] flex flex-col gap-2.5 flex-none mx-auto">
             <Link
-              href="/events"
+              href="/community"
               style={{ backgroundColor: "#ffffff", color: "#000000" }}
               className="w-full h-12 rounded-full !bg-white !text-black font-semibold text-sm flex items-center justify-center gap-2 hover:!bg-zinc-100 active:scale-95 transition-all shadow-md"
             >
-              <span className="!text-black font-semibold">See sessions</span>
+              <span className="!text-black font-semibold">Join Community</span>
               <ArrowRight className="w-4 h-4 !text-black stroke-[2.2]" />
             </Link>
             <Link
-              href="/projects"
+              href="/events"
               className="w-full h-12 rounded-full bg-[var(--surface-highlight)] border border-[var(--line)] text-[var(--white)] font-medium text-sm flex items-center justify-center hover:border-zinc-500 active:scale-95 transition-all"
             >
-              <span>See projects</span>
+              <span>Upcoming Events</span>
             </Link>
           </div>
         </div>
