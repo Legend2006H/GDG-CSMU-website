@@ -30,7 +30,7 @@ export const RIGHT_CHEVRON_BOTTOM = "#FBBC04";// Yellow
 export const HERO_SCROLL_HEIGHT = "130vh";  // Fast, responsive scroll runway
 export const SCRUB = 0.3;                   // Snappy GSAP scrub smoothing (reduced lag)
 export const TITLE_TRAVEL = 120;            // xPercent magnitude for title halves
-export const CHEVRON_TRAVEL = 200;          // xPercent magnitude for chevrons
+export const CHEVRON_TRAVEL = 120;          // xPercent magnitude for chevrons (matching title halves)
 export const META_FADE_END = 0.35;          // meta group fully faded by 35% of scroll
 export const HERO_SCALE_TO = 0.96;          // inner hero scale down over scroll
 

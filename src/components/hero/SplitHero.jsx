@@ -38,13 +38,18 @@ export function SplitHero() {
   const mobileHintRef = useRef(null);
 
   const [isAnimated, setIsAnimated] = useState(false);
+  const [hoveredChevron, setHoveredChevron] = useState(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     gsap.registerPlugin(ScrollTrigger, SplitText);
 
-    // Initial SplitText reveal for the headline on page entrance (both desktop & mobile)
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // Initial load animations: chevrons fade + slide from sides, headline lines up
     document.fonts.ready.then(() => {
       const titleTargets = [
         leftRef.current,
@@ -62,9 +67,48 @@ export function SplitHero() {
             opacity: 1,
             duration: 0.9,
             stagger: 0.08,
-            ease: "expo.out",
+            ease: "power4.out",
           }
         );
+      }
+
+      if (!prefersReducedMotion) {
+        // Chevrons fade + slide in from sides: left from x -40, right from x +40, 0.9s, power4.out
+        const leftChevrons = [leftChevronRef.current, mobileLeftChevronRef.current].filter(Boolean);
+        const rightChevrons = [rightChevronRef.current, mobileRightChevronRef.current].filter(Boolean);
+
+        if (leftChevrons.length > 0) {
+          gsap.fromTo(
+            leftChevrons,
+            { x: -40, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.9, ease: "power4.out", clearProps: "x" }
+          );
+        }
+        if (rightChevrons.length > 0) {
+          gsap.fromTo(
+            rightChevrons,
+            { x: 40, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.9, ease: "power4.out", clearProps: "x" }
+          );
+        }
+
+        // Idle gentle pulse: scale 1 to 1.04, 2.4s loop, staggered 0.15s
+        gsap.to(leftChevrons, {
+          scale: 1.04,
+          duration: 2.4,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.9,
+        });
+        gsap.to(rightChevrons, {
+          scale: 1.04,
+          duration: 2.4,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 1.05,
+        });
       }
     });
 
@@ -226,18 +270,18 @@ export function SplitHero() {
           );
         }
 
-        // 2. Chevrons travel outward fast
+        // 2. Chevrons travel outward fast (matching -120 / +120)
         if (mobileLeftChevronRef.current) {
           tl.to(
             mobileLeftChevronRef.current,
-            { xPercent: -180, opacity: 0, duration: 0.65, ease: "power2.out" },
+            { xPercent: -120, opacity: 0, duration: 0.65, ease: "power2.out" },
             0
           );
         }
         if (mobileRightChevronRef.current) {
           tl.to(
             mobileRightChevronRef.current,
-            { xPercent: 180, opacity: 0, duration: 0.65, ease: "power2.out" },
+            { xPercent: 120, opacity: 0, duration: 0.65, ease: "power2.out" },
             0
           );
         }
@@ -344,10 +388,17 @@ export function SplitHero() {
             <span
               ref={leftRef}
               aria-hidden="true"
-              className="flex items-center gap-3 sm:gap-4 md:gap-5 will-change-transform"
+              className="flex items-center gap-4 sm:gap-5 md:gap-8 will-change-transform"
             >
               <span ref={leftChevronRef} className="inline-block will-change-transform flex-none">
-                <DottedChevron side="left" />
+                <DottedChevron
+                  side="left"
+                  active={hoveredChevron === "left"}
+                  dimmed={hoveredChevron === "right"}
+                  onHoverStart={() => setHoveredChevron("left")}
+                  onHoverEnd={() => setHoveredChevron(null)}
+                  className="w-[130px] h-[155px] md:w-[150px] md:h-[178px] lg:w-[170px] lg:h-[200px]"
+                />
               </span>
               <span className="font-bold tracking-tight text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-[var(--hero-title)] whitespace-nowrap leading-none">
                 GDG
@@ -358,13 +409,20 @@ export function SplitHero() {
             <span
               ref={rightRef}
               aria-hidden="true"
-              className="flex items-center gap-3 sm:gap-4 md:gap-5 will-change-transform"
+              className="flex items-center gap-4 sm:gap-5 md:gap-8 will-change-transform"
             >
               <span className="font-bold tracking-tight text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-[var(--hero-title)] whitespace-nowrap leading-none">
                 CSMU
               </span>
               <span ref={rightChevronRef} className="inline-block will-change-transform flex-none">
-                <DottedChevron side="right" />
+                <DottedChevron
+                  side="right"
+                  active={hoveredChevron === "right"}
+                  dimmed={hoveredChevron === "left"}
+                  onHoverStart={() => setHoveredChevron("right")}
+                  onHoverEnd={() => setHoveredChevron(null)}
+                  className="w-[130px] h-[155px] md:w-[150px] md:h-[178px] lg:w-[170px] lg:h-[200px]"
+                />
               </span>
             </span>
           </h1>
@@ -455,15 +513,22 @@ export function SplitHero() {
 
         {/* 2. Headline with 3D Chevrons flanking stacked GDG CSMU */}
         <h1
-          className="flex items-center justify-center gap-3 sm:gap-4 py-1 select-none w-full flex-none overflow-visible"
+          className="flex items-center justify-center gap-2 sm:gap-3 py-1 select-none w-full flex-none overflow-visible"
           aria-label="< GDG CSMU >"
         >
-          {/* Left Chevron */}
+          {/* Left Chevron (scaled to ~60% size, ~88x104 to 100x120) */}
           <span
             ref={mobileLeftChevronRef}
             className="inline-flex items-center justify-center flex-none will-change-transform"
           >
-            <DottedChevron side="left" className="!h-[clamp(74px,20vw,98px)] w-auto" />
+            <DottedChevron
+              side="left"
+              active={hoveredChevron === "left"}
+              dimmed={hoveredChevron === "right"}
+              onHoverStart={() => setHoveredChevron("left")}
+              onHoverEnd={() => setHoveredChevron(null)}
+              className="!w-[88px] !h-[104px] sm:!w-[100px] sm:!h-[120px]"
+            />
           </span>
 
           {/* Center Stacked Words */}
@@ -482,12 +547,19 @@ export function SplitHero() {
             </span>
           </span>
 
-          {/* Right Chevron */}
+          {/* Right Chevron (scaled to ~60% size) */}
           <span
             ref={mobileRightChevronRef}
             className="inline-flex items-center justify-center flex-none will-change-transform"
           >
-            <DottedChevron side="right" className="!h-[clamp(74px,20vw,98px)] w-auto" />
+            <DottedChevron
+              side="right"
+              active={hoveredChevron === "right"}
+              dimmed={hoveredChevron === "left"}
+              onHoverStart={() => setHoveredChevron("right")}
+              onHoverEnd={() => setHoveredChevron(null)}
+              className="!w-[88px] !h-[104px] sm:!w-[100px] sm:!h-[120px]"
+            />
           </span>
         </h1>
 
