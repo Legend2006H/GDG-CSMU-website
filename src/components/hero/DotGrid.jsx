@@ -47,6 +47,43 @@ export function DotGrid({ className = "" }) {
     let burstRadius = GLOW_RADIUS;
     let burstAlpha = GLOW_ALPHA_BONUS;
 
+    // Water wave ripple state on click / tap
+    const ripples = [];
+    let lastClickTime = 0;
+    let lastClickX = -9999;
+    let lastClickY = -9999;
+    let lastFrameTime = performance.now();
+
+    const spawnRipple = (x, y) => {
+      const now = performance.now();
+      // Debounce duplicate events in virtually identical spot within 80ms (e.g. pointerdown + touchstart)
+      if (now - lastClickTime < 80 && Math.hypot(x - lastClickX, y - lastClickY) < 20) {
+        return;
+      }
+      lastClickTime = now;
+      lastClickX = x;
+      lastClickY = y;
+
+      const isMobile = window.innerWidth < 768;
+      const maxRadius = Math.max(width, height) * (isMobile ? 1.35 : 1.15);
+
+      ripples.push({
+        x,
+        y,
+        radius: 0,
+        maxRadius,
+        speed: isMobile ? 520 : 620, // px per second
+        wavelength: isMobile ? 85 : 110, // width of the wave crest band
+        amplitude: isMobile ? 7 : 9.5, // max dot displacement (px)
+        strength: 1.0,
+      });
+
+      // Keep max 5 active ripples to maintain high performance
+      if (ripples.length > 5) {
+        ripples.shift();
+      }
+    };
+
     const isLightMode = () =>
       document.documentElement.classList.contains("light") ||
       document.documentElement.getAttribute("data-theme") === "light";
@@ -147,47 +184,162 @@ export function DotGrid({ className = "" }) {
       const rgb = getDotRgb();
       const glowDistSq = currentGlowRadius * currentGlowRadius;
 
-      // 1. Draw base dots outside glow radius in one single batch pass
-      const baseDotAlpha = isLightMode() ? 0.22 : (isMobile ? 0.12 : BASE_ALPHA);
-      ctx.fillStyle = `rgba(${rgb}, ${baseDotAlpha})`;
-      ctx.beginPath();
-      for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
-        for (let y = DOT_SPACING / 2; y < height; y += DOT_SPACING) {
-          const dx = x - renderedX;
-          const dy = y - renderedY;
-          if (dx * dx + dy * dy < glowDistSq) continue;
-          ctx.moveTo(x + DOT_BASE_RADIUS, y);
-          ctx.arc(x, y, DOT_BASE_RADIUS, 0, Math.PI * 2);
+      // Update water wave ripples
+      const now = performance.now();
+      const dt = lastFrameTime > 0 ? Math.min((now - lastFrameTime) / 1000, 0.05) : 0.016;
+      lastFrameTime = now;
+
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rip = ripples[i];
+        rip.radius += rip.speed * dt;
+        rip.strength = Math.max(0, 1 - Math.pow(rip.radius / rip.maxRadius, 1.25));
+
+        if (rip.radius >= rip.maxRadius || rip.strength <= 0.01) {
+          ripples.splice(i, 1);
+        } else {
+          const minR = Math.max(0, rip.radius - rip.wavelength);
+          const maxR = rip.radius + rip.wavelength;
+          rip.minDistSq = minR * minR;
+          rip.maxDistSq = maxR * maxR;
         }
       }
-      ctx.fill();
 
-      // 2. Draw glowing dots within glow radius
-      const minX = Math.max(
-        DOT_SPACING / 2,
-        Math.floor((renderedX - currentGlowRadius) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
-      );
-      const maxX = Math.min(width, renderedX + currentGlowRadius);
-      const minY = Math.max(
-        DOT_SPACING / 2,
-        Math.floor((renderedY - currentGlowRadius) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
-      );
-      const maxY = Math.min(height, renderedY + currentGlowRadius);
+      const hasRipples = ripples.length > 0;
+      const baseDotAlpha = isLightMode() ? 0.22 : (isMobile ? 0.12 : BASE_ALPHA);
 
-      for (let x = minX; x <= maxX; x += DOT_SPACING) {
-        for (let y = minY; y <= maxY; y += DOT_SPACING) {
-          const dx = x - renderedX;
-          const dy = y - renderedY;
-          const distSq = dx * dx + dy * dy;
-          if (distSq < glowDistSq) {
-            const d = Math.sqrt(distSq);
-            const glow = Math.max(0, 1 - d / currentGlowRadius);
-            const alpha = baseDotAlpha + glow * currentGlowAlphaBonus;
-            const radius = DOT_BASE_RADIUS + glow * DOT_GLOW_RADIUS_BONUS;
+      if (!hasRipples) {
+        // Fast path: draw base dots outside glow radius in one single batch pass
+        ctx.fillStyle = `rgba(${rgb}, ${baseDotAlpha})`;
+        ctx.beginPath();
+        for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
+          for (let y = DOT_SPACING / 2; y < height; y += DOT_SPACING) {
+            const dx = x - renderedX;
+            const dy = y - renderedY;
+            if (dx * dx + dy * dy < glowDistSq) continue;
+            ctx.moveTo(x + DOT_BASE_RADIUS, y);
+            ctx.arc(x, y, DOT_BASE_RADIUS, 0, Math.PI * 2);
+          }
+        }
+        ctx.fill();
 
-            ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+        // Draw glowing dots within glow radius
+        const minX = Math.max(
+          DOT_SPACING / 2,
+          Math.floor((renderedX - currentGlowRadius) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
+        );
+        const maxX = Math.min(width, renderedX + currentGlowRadius);
+        const minY = Math.max(
+          DOT_SPACING / 2,
+          Math.floor((renderedY - currentGlowRadius) / DOT_SPACING) * DOT_SPACING + DOT_SPACING / 2
+        );
+        const maxY = Math.min(height, renderedY + currentGlowRadius);
+
+        for (let x = minX; x <= maxX; x += DOT_SPACING) {
+          for (let y = minY; y <= maxY; y += DOT_SPACING) {
+            const dx = x - renderedX;
+            const dy = y - renderedY;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < glowDistSq) {
+              const d = Math.sqrt(distSq);
+              const glow = Math.max(0, 1 - d / currentGlowRadius);
+              const alpha = baseDotAlpha + glow * currentGlowAlphaBonus;
+              const radius = DOT_BASE_RADIUS + glow * DOT_GLOW_RADIUS_BONUS;
+
+              ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+              ctx.beginPath();
+              ctx.arc(x, y, radius, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        }
+      } else {
+        // Water wave ripple path: compute physical wave displacement & crest glow
+        ctx.fillStyle = `rgba(${rgb}, ${baseDotAlpha})`;
+        ctx.beginPath();
+
+        // 1. Batch undisturbed dots in single call
+        for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
+          for (let y = DOT_SPACING / 2; y < height; y += DOT_SPACING) {
+            const mDx = x - renderedX;
+            const mDy = y - renderedY;
+            if (mDx * mDx + mDy * mDy < glowDistSq) continue;
+
+            let inRipple = false;
+            for (let r = 0; r < ripples.length; r++) {
+              const rip = ripples[r];
+              const rDx = x - rip.x;
+              const rDy = y - rip.y;
+              const rDistSq = rDx * rDx + rDy * rDy;
+              if (rDistSq >= rip.minDistSq && rDistSq <= rip.maxDistSq) {
+                inRipple = true;
+                break;
+              }
+            }
+            if (inRipple) continue;
+
+            ctx.moveTo(x + DOT_BASE_RADIUS, y);
+            ctx.arc(x, y, DOT_BASE_RADIUS, 0, Math.PI * 2);
+          }
+        }
+        ctx.fill();
+
+        // 2. Draw disturbed dots (ripples + glow) with concentric water wave displacement
+        for (let x = DOT_SPACING / 2; x < width; x += DOT_SPACING) {
+          for (let y = DOT_SPACING / 2; y < height; y += DOT_SPACING) {
+            const mDx = x - renderedX;
+            const mDy = y - renderedY;
+            const mDistSq = mDx * mDx + mDy * mDy;
+            const inMouse = mDistSq < glowDistSq;
+
+            let inRipple = false;
+            let dispX = 0;
+            let dispY = 0;
+            let extraAlpha = 0;
+            let extraRadius = 0;
+
+            for (let r = 0; r < ripples.length; r++) {
+              const rip = ripples[r];
+              const rDx = x - rip.x;
+              const rDy = y - rip.y;
+              const rDistSq = rDx * rDx + rDy * rDy;
+              if (rDistSq >= rip.minDistSq && rDistSq <= rip.maxDistSq) {
+                inRipple = true;
+                const d = Math.sqrt(rDistSq);
+                const delta = d - rip.radius;
+                const norm = delta / rip.wavelength; // -1 to +1
+                // Smooth Hann cosine envelope (zero at edges, 1 at center)
+                const envelope = Math.cos(norm * (Math.PI / 2));
+                // Concentric sinusoidal wave crests & troughs for realistic liquid oscillation
+                const wave = Math.sin(-norm * Math.PI * 2) * envelope * rip.strength;
+
+                if (d > 1) {
+                  dispX += (rDx / d) * wave * rip.amplitude;
+                  dispY += (rDy / d) * wave * rip.amplitude;
+                }
+
+                const crest = Math.max(0, envelope * rip.strength);
+                extraAlpha += crest * 0.75;
+                extraRadius += crest * 2.2;
+              }
+            }
+
+            if (!inRipple && !inMouse) continue;
+
+            let mouseAlpha = 0;
+            let mouseRadius = 0;
+            if (inMouse) {
+              const d = Math.sqrt(mDistSq);
+              const glow = Math.max(0, 1 - d / currentGlowRadius);
+              mouseAlpha = glow * currentGlowAlphaBonus;
+              mouseRadius = glow * DOT_GLOW_RADIUS_BONUS;
+            }
+
+            const finalAlpha = Math.min(0.95, baseDotAlpha + mouseAlpha + extraAlpha);
+            const finalRadius = DOT_BASE_RADIUS + mouseRadius + extraRadius;
+
+            ctx.fillStyle = `rgba(${rgb}, ${finalAlpha.toFixed(3)})`;
             ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.arc(x + dispX, y + dispY, finalRadius, 0, Math.PI * 2);
             ctx.fill();
           }
         }
@@ -226,9 +378,19 @@ export function DotGrid({ className = "" }) {
       }
     };
 
+    const handlePointerDown = (e) => {
+      if (isOffCondition() || !isVisible) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (x >= 0 && x <= width && y >= 0 && y <= height) {
+        spawnRipple(x, y);
+      }
+    };
+
     // Touch handlers for mobile
     const handleTouchStart = (e) => {
-      if (isOffCondition()) return;
+      if (isOffCondition() || !isVisible) return;
       const touch = e.touches[0];
       if (!touch) return;
       const rect = canvas.getBoundingClientRect();
@@ -238,6 +400,9 @@ export function DotGrid({ className = "" }) {
         targetX = x;
         targetY = y;
         isInteracting = true;
+
+        // Trigger water wave ripple
+        spawnRipple(x, y);
 
         // Trigger tap burst
         burstActive = true;
@@ -322,9 +487,10 @@ export function DotGrid({ className = "" }) {
       observer.observe(heroContainer);
     }
 
-    // Window-level pointer tracking ensures smooth 1:1 synchronization with custom cursor
+    // Window-level pointer tracking ensures smooth 1:1 synchronization with custom cursor & click ripples
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
@@ -356,6 +522,7 @@ export function DotGrid({ className = "" }) {
       resizeObserver.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("pointerdown", handlePointerDown);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
