@@ -655,8 +655,8 @@ main {
     left: 12px;
     right: 12px;
     height: 52px;
-    padding: 0 14px;
-    border-radius: 16px;
+    padding: 0 16px;
+    border-radius: 9999px;
   }
   .desktop-nav {
     display: none;
