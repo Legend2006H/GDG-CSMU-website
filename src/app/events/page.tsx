@@ -85,7 +85,7 @@ export default function EventsPage() {
 
                       {/* Live Countdown & Add to Calendar */}
                       <EventCountdown
-                        targetDate={event.date + "T10:30:00+05:30"}
+                        targetDate={event.startAt || `${event.date}T11:00:00+05:30`}
                         eventTitle={event.title}
                         location={event.location}
                         description={event.description}
@@ -93,7 +93,7 @@ export default function EventsPage() {
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold text-[#8db1ff]">
-                      <span>View Event Details &amp; Register</span>
+                      <span>{event.registrationLink ? "View Event Details & Register" : "View Event Details"}</span>
                       <span>→</span>
                     </div>
                   </div>
@@ -220,6 +220,10 @@ export default function EventsPage() {
                   <span className="font-semibold text-[var(--white)]">{selectedEvent.displayDate}</span>
                 </div>
                 <div>
+                  <span className="text-[var(--muted)] block mb-1">TIME</span>
+                  <span className="font-semibold text-[var(--white)]">{selectedEvent.time || "Time to be announced"}</span>
+                </div>
+                <div>
                   <span className="text-[var(--muted)] block mb-1">LOCATION &amp; MODE</span>
                   <span className="font-semibold text-[var(--white)]">{selectedEvent.location} ({selectedEvent.mode})</span>
                 </div>
@@ -229,7 +233,7 @@ export default function EventsPage() {
                 </div>
                 <div>
                   <span className="text-[var(--muted)] block mb-1">
-                    {selectedEvent.status === "Registration Open" || selectedEvent.status === "Upcoming"
+                    {selectedEvent.status === "Registration Open" || selectedEvent.status === "Upcoming" || selectedEvent.status === "Upcoming Orientation"
                       ? "EXPECTED ATTENDEES"
                       : "ATTENDANCE"}
                   </span>
@@ -238,10 +242,10 @@ export default function EventsPage() {
               </div>
 
               {/* Countdown inside modal for upcoming events */}
-              {(selectedEvent.status === "Registration Open" || selectedEvent.status === "Upcoming") && (
+              {(selectedEvent.status === "Registration Open" || selectedEvent.status === "Upcoming" || selectedEvent.status === "Upcoming Orientation") && (
                 <div className="p-4 rounded-2xl bg-[var(--surface-highlight)] border border-[var(--card-border)]">
                   <EventCountdown
-                    targetDate={selectedEvent.date + "T10:30:00+05:30"}
+                    targetDate={selectedEvent.startAt || `${selectedEvent.date}T11:00:00+05:30`}
                     eventTitle={selectedEvent.title}
                     location={selectedEvent.location}
                     description={selectedEvent.description}

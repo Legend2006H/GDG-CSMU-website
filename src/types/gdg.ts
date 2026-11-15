@@ -2,6 +2,7 @@ export interface EventItem {
   id: string;
   title: string;
   date: string;
+  startAt?: string;
   displayDate: string;
   time?: string | null;
   location: string;
@@ -37,10 +38,5 @@ export interface TeamData {
     graphicDesigning: TeamMember[];
     prMedia: TeamMember[];
     sponsorshipTeam: TeamMember[];
-  };
-  past: {
-    lead: TeamMember[];
-    technicalHeads: TeamMember[];
-    coreTeam: TeamMember[];
   };
 }
