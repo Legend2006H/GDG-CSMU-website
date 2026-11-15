@@ -1,141 +1,93 @@
 "use client";
 
-import React, { useEffect, useState, useSyncExternalStore } from "react";
-import { Calendar, Clock, ExternalLink } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Clock, CalendarDays } from "lucide-react";
 
 interface EventCountdownProps {
-  targetDate: string; // ISO string e.g. "2026-11-17T10:30:00+05:30"
+  targetDate: string;
   eventTitle: string;
   location: string;
   description: string;
 }
 
-function subscribe() {
-  return () => {};
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
-function getClientSnapshot() {
-  return true;
+const ZERO: TimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+function getTimeLeft(target: number): TimeLeft {
+  const diff = Math.max(0, target - Date.now());
+  return {
+    days: Math.floor(diff / 86_400_000),
+    hours: Math.floor((diff % 86_400_000) / 3_600_000),
+    minutes: Math.floor((diff % 3_600_000) / 60_000),
+    seconds: Math.floor((diff % 60_000) / 1_000),
+  };
 }
 
-function getServerSnapshot() {
-  return false;
-}
-
-export function EventCountdown({
-  targetDate,
-  eventTitle,
-  location,
-  description,
-}: EventCountdownProps) {
-  const isMounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-
-  const [timeLeft, setTimeLeft] = useState<{
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  }>(() => {
-    const target = new Date(targetDate).getTime();
-    const now = new Date().getTime();
-    const difference = target - now;
-    if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-      minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-      seconds: Math.floor((difference % (1000 * 60)) / 1000),
-    };
-  });
+export function EventCountdown({ targetDate, eventTitle, location, description }: EventCountdownProps) {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(ZERO);
+  const [mounted, setMounted] = useState(false);
+  const target = new Date(targetDate).getTime();
+  const eventHasStarted = mounted && Date.now() >= target;
 
   useEffect(() => {
-    const target = new Date(targetDate).getTime();
+    setMounted(true);
+    setTimeLeft(getTimeLeft(target));
+    const interval = window.setInterval(() => setTimeLeft(getTimeLeft(target)), 1000);
+    return () => window.clearInterval(interval);
+  }, [target]);
 
-    const calculateTime = () => {
-      const now = new Date().getTime();
-      const difference = target - now;
+  const timestamp = new Intl.DateTimeFormat("en-IN", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
+  }).format(new Date(targetDate));
 
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-    };
-
-    const interval = setInterval(calculateTime, 1000);
-    return () => clearInterval(interval);
-  }, [targetDate]);
-
-  // Google Calendar pre-filled URL (UTC dates: 20261117T050000Z to 20261117T080000Z for 10:30 AM to 1:30 PM IST)
-  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-    eventTitle
-  )}&dates=20261117T050000Z/20261117T080000Z&details=${encodeURIComponent(
-    description
-  )}&location=${encodeURIComponent(location)}`;
-
-  if (!isMounted) {
-    return null;
-  }
+  const units: Array<{ label: string; value: number }> = [
+    { label: "Days", value: timeLeft.days },
+    { label: "Hours", value: timeLeft.hours },
+    { label: "Mins", value: timeLeft.minutes },
+    { label: "Secs", value: timeLeft.seconds },
+  ];
 
   return (
-    <div className="pt-2 space-y-3">
-      <div className="flex items-center gap-2 text-xs font-mono text-[var(--muted)]">
-        <Clock className="w-3.5 h-3.5 text-[#FBBC04]" />
-        <span>STARTS IN:</span>
+    <div className="pt-2 space-y-3" aria-live="off">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-[var(--muted)]">
+        <span className="inline-flex items-center gap-2">
+          <Clock className="w-3.5 h-3.5 text-[#FBBC04]" />
+          <span>{eventHasStarted ? "EVENT STARTED" : "COUNTDOWN TO ORIENTATION"}</span>
+        </span>
+        <span className="text-[#8db1ff]">Live · IST</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm">
-        <div className="p-2.5 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)] text-center">
-          <span className="block text-xl sm:text-2xl font-bold font-mono text-[var(--white)] leading-tight">
-            {String(timeLeft.days).padStart(2, "0")}
-          </span>
-          <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">
-            Days
-          </span>
-        </div>
-        <div className="p-2.5 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)] text-center">
-          <span className="block text-xl sm:text-2xl font-bold font-mono text-[var(--white)] leading-tight">
-            {String(timeLeft.hours).padStart(2, "0")}
-          </span>
-          <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">
-            Hours
-          </span>
-        </div>
-        <div className="p-2.5 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)] text-center">
-          <span className="block text-xl sm:text-2xl font-bold font-mono text-[var(--white)] leading-tight">
-            {String(timeLeft.minutes).padStart(2, "0")}
-          </span>
-          <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">
-            Mins
-          </span>
-        </div>
-        <div className="p-2.5 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)] text-center">
-          <span className="block text-xl sm:text-2xl font-bold font-mono text-[var(--white)] leading-tight">
-            {String(timeLeft.seconds).padStart(2, "0")}
-          </span>
-          <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">
-            Secs
-          </span>
-        </div>
+      <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-md">
+        {units.map((unit) => (
+          <div key={unit.label} className="p-2.5 rounded-xl bg-[var(--surface-highlight)] border border-[var(--card-border)] text-center">
+            <span className="block text-xl sm:text-2xl font-bold font-mono text-[var(--white)] leading-tight tabular-nums">
+              {String(unit.value).padStart(2, "0")}
+            </span>
+            <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">{unit.label}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="pt-1">
-        <a
-          href={gcalUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-xs font-mono font-semibold text-[#8db1ff] hover:text-[var(--white)] transition-colors py-1"
-        >
-          <Calendar className="w-3.5 h-3.5 text-[#4285F4]" />
-          <span>Add to Google Calendar</span>
-          <ExternalLink className="w-3 h-3" />
-        </a>
+      <div className="flex flex-col gap-1 text-xs font-mono text-[var(--muted)]">
+        <span className="inline-flex items-center gap-2 text-[var(--muted-bright)]">
+          <CalendarDays className="w-3.5 h-3.5 text-[#4285F4]" />
+          <time dateTime={targetDate}>{timestamp}</time>
+        </span>
+        <span className="sr-only">{eventTitle}. {location}. {description}</span>
       </div>
     </div>
   );

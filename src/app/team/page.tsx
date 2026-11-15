@@ -40,7 +40,7 @@ function getInitials(name: string) {
 export default function TeamPage() {
   const pathname = usePathname();
   const typedData = teamData as unknown as TeamData;
-  const { current, past } = typedData;
+  const { current } = typedData;
 
   const floatingImgRef = useRef<HTMLDivElement>(null);
   const [hoveredPhoto, setHoveredPhoto] = useState<string | null>(null);
@@ -410,52 +410,7 @@ export default function TeamPage() {
           </section>
         </div>
 
-        {/* ========================================================
-            PAST TEAM SECTION (Kept 100% as-is, all 9 past members)
-            ======================================================== */}
-        <section className="mt-28 border-t border-[var(--line)] pt-16">
-          <div className="mb-12">
-            <span className="font-mono text-xs text-[var(--muted)] uppercase tracking-wider font-semibold">
-              {"// ARCHIVE & ALUMNI"}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[var(--white)] mt-1">
-              Past Team
-            </h2>
-            <p className="text-[var(--muted-bright)] text-sm mt-2">
-              The founding leaders and core contributors who paved the way for GDG on Campus CSMU.
-            </p>
-          </div>
 
-          {/* Lead */}
-          <div className="space-y-6 mb-16">
-            <h3 className="text-xl font-bold tracking-tight text-[var(--white)] font-mono text-sm uppercase text-[#4285F4]">
-              Chapter Lead
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {past.lead.map((member) => renderMemberCard(member))}
-            </div>
-          </div>
-
-          {/* Technical Heads */}
-          <div className="space-y-6 mb-16">
-            <h3 className="text-xl font-bold tracking-tight text-[var(--white)] font-mono text-sm uppercase text-[#34A853]">
-              Technical Heads
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {past.technicalHeads.map((member) => renderMemberCard(member))}
-            </div>
-          </div>
-
-          {/* Core Team */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold tracking-tight text-[var(--white)] font-mono text-sm uppercase text-[#FBBC04]">
-              Core Team
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {past.coreTeam.map((member) => renderMemberCard(member))}
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   );

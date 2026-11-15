@@ -711,3 +711,115 @@ main {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* GDG CSMU orientation: lightweight CSS 3D orbital visual (no WebGL dependency). */
+.orientation-visual-wrap {
+  isolation: isolate;
+  perspective: 900px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(66, 133, 244, 0.2), transparent 38%),
+    radial-gradient(circle at 78% 20%, rgba(155, 81, 224, 0.16), transparent 32%),
+    #090d18;
+}
+
+.orientation-orbit-scene {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.orientation-orb {
+  width: clamp(110px, 30%, 190px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  font-family: "Google Sans Flex Local", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.1rem, 3vw, 2rem);
+  letter-spacing: -0.06em;
+  text-shadow: 0 2px 18px rgba(255,255,255,.65);
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.95), transparent 5%),
+    radial-gradient(circle at 34% 28%, #8db8ff 0%, #4285f4 24%, #283b87 55%, #11172f 78%);
+  box-shadow:
+    inset -18px -20px 35px rgba(0,0,0,.65),
+    inset 8px 8px 20px rgba(255,255,255,.28),
+    0 0 45px rgba(66,133,244,.48),
+    0 0 100px rgba(66,133,244,.18);
+  transform: translateZ(35px);
+  animation: gdg-orb-float 7s ease-in-out infinite;
+}
+
+.orientation-orbit {
+  position: absolute;
+  width: min(72%, 410px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(141,177,255,.58);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(66,133,244,.12), inset 0 0 18px rgba(66,133,244,.08);
+  transform-style: preserve-3d;
+}
+
+.orientation-orbit-one {
+  transform: rotateX(68deg) rotateZ(-24deg);
+  animation: gdg-orbit-spin 18s linear infinite;
+}
+
+.orientation-orbit-two {
+  width: min(58%, 330px);
+  border-color: rgba(251,188,4,.5);
+  transform: rotateY(68deg) rotateZ(28deg);
+  animation: gdg-orbit-spin-reverse 23s linear infinite;
+}
+
+.orientation-orbit-dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 18px currentColor;
+}
+
+.orientation-dot-one {
+  top: 24%;
+  left: 29%;
+  color: #34a853;
+  background: currentColor;
+}
+
+.orientation-dot-two {
+  right: 25%;
+  bottom: 23%;
+  color: #ea4335;
+  background: currentColor;
+}
+
+@keyframes gdg-orb-float {
+  0%, 100% { transform: translate3d(0, 0, 35px) rotateY(-8deg); }
+  50% { transform: translate3d(0, -9px, 45px) rotateY(8deg); }
+}
+
+@keyframes gdg-orbit-spin {
+  from { transform: rotateX(68deg) rotateZ(-24deg); }
+  to { transform: rotateX(68deg) rotateZ(336deg); }
+}
+
+@keyframes gdg-orbit-spin-reverse {
+  from { transform: rotateY(68deg) rotateZ(28deg); }
+  to { transform: rotateY(68deg) rotateZ(-332deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orientation-orb,
+  .orientation-orbit-one,
+  .orientation-orbit-two {
+    animation: none !important;
+  }
+}

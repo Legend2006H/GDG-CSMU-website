@@ -268,7 +268,7 @@ export default function Home() {
       <section id="events" className="max-w-[1200px] mx-auto px-6 py-24">
         <div className="mb-10">
           <span className="section-index font-mono text-xs uppercase tracking-wider text-[var(--muted)]">
-            {"// NEXT EVENT"}
+            {"// UPCOMING ORIENTATION"}
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-2 text-[var(--white)]">
             Don&apos;t miss out on our upcoming event
@@ -316,7 +316,7 @@ export default function Home() {
 
                   {/* Live countdown & Add to Calendar */}
                   <EventCountdown
-                    targetDate="2026-11-17T10:30:00+05:30"
+                    targetDate={nextEvent.startAt || `${nextEvent.date}T11:00:00+05:30`}
                     eventTitle={nextEvent.title}
                     location={nextEvent.location}
                     description={nextEvent.description}
@@ -347,12 +347,21 @@ export default function Home() {
 
                 <div className="lg:col-span-5">
                   <TiltCard maxTilt={8} scale={1.03} glare={true} className="rounded-2xl">
-                    <div className="relative aspect-[16/10] rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--surface-highlight)]">
+                    <div className="orientation-visual-wrap relative aspect-[16/10] rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--surface-highlight)]">
+                      <div className="orientation-orbit-scene" aria-hidden="true">
+                        <div className="orientation-orbit orientation-orbit-one" />
+                        <div className="orientation-orbit orientation-orbit-two" />
+                        <div className="orientation-orb">
+                          <span>GDG</span>
+                        </div>
+                        <span className="orientation-orbit-dot orientation-dot-one" />
+                        <span className="orientation-orbit-dot orientation-dot-two" />
+                      </div>
                       <Image
                         src={nextEvent.image}
-                        alt="GDG CSMU Annual Orientation 2026 - Main Auditorium, Panvel"
+                        alt="GDG CSMU Orientation 2026"
                         fill
-                        className="object-cover"
+                        className="object-cover opacity-30 mix-blend-screen"
                         sizes="(max-width: 768px) 100vw, 40vw"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] via-transparent to-transparent" />
