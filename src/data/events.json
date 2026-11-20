@@ -1,6 +1,24 @@
 {
   "upcoming": [
     {
+      "id": "machine learning workshop",
+      "title": "GDG on Campus CSMU workshop 2026",
+      "date": "2026-11-23",
+      "displayDate": "Monday, 12 November 2026",
+      "time": "11:00 AM IST",
+      "location": "Architecture Building, CSMU Campus, Panvel",
+      "mode": "In-Person (Offline)",
+      "expectedAttendees": "350+ Students",
+      "speaker": "GDG CSMU Core Leads & Mentors",
+      "description": "Join Google Developer Groups (GDG) — CSMU for an interactive, hands-on session designed to take you from raw data to building your first predictive Machine Learning models.",
+      "registrationLink": "https://docs.google.com/forms/d/e/1FAIpQLSc3oxYPlTXKyMBuNcK_Eo0R073HeVlHlxLptA1Nt6qs3xE15A/viewform",
+      "image": "/images/events/workshop on ml.png",
+      "status": "REGISTER NOW",
+      "startAt": "2026-11-23T11:00:00+05:30"
+    }
+  ],
+  "past": [
+    {
       "id": "gdg-orientation-2026",
       "title": "GDG on Campus CSMU — Annual Orientation 2026",
       "date": "2026-11-17",
@@ -11,13 +29,11 @@
       "expectedAttendees": "350+ Students",
       "speaker": "GDG CSMU Core Leads & Mentors",
       "description": "Join the GDG on Campus CSMU orientation to meet the community, discover our technology tracks, connect with fellow student developers, and learn how to get involved in upcoming workshops and projects.",
-      "registrationLink": null,
+      "registrationLink": "closed",
       "image": "/images/events/fallback.jpg",
-      "status": "Upcoming Orientation",
-      "startAt": "2026-11-17T11:00:00+05:30"
-    }
-  ],
-  "past": [
+      "status": "Archived Event"
+      
+    },
     {
       "id": "init-2026",
       "title": "INIT 2026 — Annual Tech Kickoff",
