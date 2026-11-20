@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import eventsData from "@/data/events.json";
 import { EventItem } from "@/types/gdg";
@@ -10,6 +10,27 @@ import { EventCountdown } from "@/components/events/EventCountdown";
 
 export default function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+
+  // Lock body scroll and prevent background scroll when modal is open
+  useEffect(() => {
+    if (!selectedEvent) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedEvent(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedEvent]);
 
   const upcomingEvents = eventsData.upcoming as EventItem[];
   const pastEvents = eventsData.past as EventItem[];
@@ -177,12 +198,14 @@ export default function EventsPage() {
         {/* Modal for Event Details */}
         {selectedEvent && (
           <div
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overscroll-contain"
             onClick={() => setSelectedEvent(null)}
+            data-lenis-prevent
           >
             <div
-              className="bg-[var(--surface-card)] border border-[var(--card-border)] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 space-y-6 shadow-2xl relative"
+              className="bg-[var(--surface-card)] border border-[var(--card-border)] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-8 space-y-6 shadow-2xl relative"
               onClick={(e) => e.stopPropagation()}
+              data-lenis-prevent
             >
               <button
                 className="absolute top-6 right-6 p-2 rounded-full bg-[var(--surface-highlight)] text-[var(--white)] hover:opacity-80 transition-opacity"

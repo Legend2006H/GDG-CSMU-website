@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore } from "react";
 import { Clock, CalendarDays } from "lucide-react";
 
 interface EventCountdownProps {
@@ -17,10 +17,21 @@ interface TimeLeft {
   seconds: number;
 }
 
-const ZERO: TimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+function subscribe(callback: () => void) {
+  const interval = window.setInterval(callback, 1000);
+  return () => window.clearInterval(interval);
+}
 
-function getTimeLeft(target: number): TimeLeft {
-  const diff = Math.max(0, target - Date.now());
+function getSnapshot() {
+  return Math.floor(Date.now() / 1000);
+}
+
+function getServerSnapshot() {
+  return 0;
+}
+
+function calculateTimeLeft(diffMs: number): TimeLeft {
+  const diff = Math.max(0, diffMs);
   return {
     days: Math.floor(diff / 86_400_000),
     hours: Math.floor((diff % 86_400_000) / 3_600_000),
@@ -30,17 +41,12 @@ function getTimeLeft(target: number): TimeLeft {
 }
 
 export function EventCountdown({ targetDate, eventTitle, location, description }: EventCountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(ZERO);
-  const [mounted, setMounted] = useState(false);
+  const currentSec = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const target = new Date(targetDate).getTime();
-  const eventHasStarted = mounted && Date.now() >= target;
-
-  useEffect(() => {
-    setMounted(true);
-    setTimeLeft(getTimeLeft(target));
-    const interval = window.setInterval(() => setTimeLeft(getTimeLeft(target)), 1000);
-    return () => window.clearInterval(interval);
-  }, [target]);
+  const isClient = currentSec > 0;
+  const nowMs = isClient ? currentSec * 1000 : target;
+  const eventHasStarted = isClient && nowMs >= target;
+  const timeLeft = isClient ? calculateTimeLeft(target - nowMs) : { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
   const timestamp = new Intl.DateTimeFormat("en-IN", {
     weekday: "long",

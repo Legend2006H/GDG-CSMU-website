@@ -272,7 +272,8 @@ export default function TeamPage() {
       {activeMobilePhoto && (
         <div
           onClick={() => setActiveMobilePhoto(null)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-6 md:hidden animate-fade-in"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-6 md:hidden animate-fade-in overscroll-contain"
+          data-lenis-prevent
         >
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-xs flex flex-col items-center">
             <TiltCard maxTilt={14} scale={1.04} glare={true} className="w-full aspect-square">
