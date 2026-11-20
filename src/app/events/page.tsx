@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import eventsData from "@/data/events.json";
 import { EventItem } from "@/types/gdg";
-import { Calendar, MapPin, Users, ExternalLink, X, Clock, AlertCircle } from "lucide-react";
+import { Calendar, MapPin, Users, ExternalLink, X, Clock, AlertCircle, ArrowLeft } from "lucide-react";
 import { TiltCard } from "@/components/animation/TiltCard";
 import { EventCountdown } from "@/components/events/EventCountdown";
 
@@ -207,13 +207,16 @@ export default function EventsPage() {
               onClick={(e) => e.stopPropagation()}
               data-lenis-prevent
             >
-              <button
-                className="absolute top-6 right-6 p-2 rounded-full bg-[var(--surface-highlight)] text-[var(--white)] hover:opacity-80 transition-opacity"
-                onClick={() => setSelectedEvent(null)}
-                aria-label="Close modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="sticky top-0 z-30 flex justify-end pointer-events-none -mt-2 -mr-2">
+                <button
+                  type="button"
+                  className="pointer-events-auto p-2.5 rounded-full bg-[var(--surface-highlight)]/90 backdrop-blur-md text-[var(--white)] hover:bg-[var(--surface-card)] hover:border-[var(--white)] transition-all border border-[var(--card-border)] shadow-lg cursor-pointer"
+                  onClick={() => setSelectedEvent(null)}
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
               <TiltCard maxTilt={8} scale={1.02} glare={true} className="rounded-2xl">
                 <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-black/90 border border-white/20 shadow-lg">
@@ -285,27 +288,36 @@ export default function EventsPage() {
                 </p>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-4 border-t border-[var(--line)] flex flex-col sm:flex-row items-center gap-3 w-full">
                 {selectedEvent.registrationLink && selectedEvent.registrationLink.startsWith("http") ? (
                   <a
                     href={selectedEvent.registrationLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="button button-primary w-full"
+                    className="button button-primary !h-12 w-full sm:!flex-1"
                   >
                     <span>Register Now (Form)</span>
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 ) : selectedEvent.registrationLink === "xyxxx" ? (
-                  <div className="p-3 rounded-xl bg-[var(--surface-highlight)] text-center text-xs font-mono text-[var(--muted)]">
-                    Registration Closed (Past Event)
+                  <div className="button !h-12 w-full sm:!flex-1 opacity-60 cursor-not-allowed">
+                    <span>Registration Closed (Past Event)</span>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-xl bg-[var(--surface-highlight)] text-center text-xs font-mono text-[var(--muted-bright)] flex items-center justify-center gap-2">
+                  <div className="button !h-12 w-full sm:!flex-1 text-[var(--muted-bright)]">
                     <AlertCircle className="w-4 h-4 text-[#FBBC04]" />
                     <span>Registration: To be confirmed</span>
                   </div>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedEvent(null)}
+                  className="button !h-12 w-full sm:!flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Go Back / Cancel</span>
+                </button>
               </div>
             </div>
           </div>
